@@ -1,5 +1,24 @@
 @import "tailwindcss";
 
+:root {
+    --color-primary: #525252;
+    /* Charcoal */
+    --color-secondary: #9F9F92;
+    /* Ash Grey */
+    --color-accent: #F25F5C;
+    /* Vibrant Coral */
+    --color-bg: #fcfff5;
+    /* Dust Grey */
+    --color-surface: #C9D5B5;
+    /* Tea Green */
+}
+
+* {
+    transition: all 0.3s ease-in-out;
+}
+
 body {
     margin: 0;
+    background-color: var(--color-bg);
+    color: var(--color-primary);
 }

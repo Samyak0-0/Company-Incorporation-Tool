@@ -18,7 +18,8 @@
     overflow: hidden;
     border-radius: 10px;
     transform: rotate(45deg);
-    background-color: rebeccapurple;
+    /* background-color: rebeccapurple; */
+    box-shadow: 2px -2px 3px;
 }
 
 .diamond-box img {
@@ -26,4 +27,31 @@
     height: 100%;
     object-fit: cover;
     transform: rotate(-45deg) scale(1.45);
+}
+
+
+.subtext {
+    color: var(--color-secondary);
+}
+
+.call-to-action {
+    border-radius: 5px;
+    border: 2px solid var(--color-primary);
+    width: fit-content;
+    height: fit-content;
+}
+
+.call-to-action:hover {
+    border: 2px solid var(--color-accent);
+    background-color: var(--color-accent);
+    color: var(--color-bg);
+}
+
+.magneto {
+    transition: transform 0.25s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+.magneto-text {
+    display: block;
+    transition: transform 0.15s cubic-bezier(0.25, 1, 0.5, 1);
 }
