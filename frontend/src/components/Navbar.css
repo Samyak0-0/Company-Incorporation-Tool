@@ -1,0 +1,24 @@
+.navbar {
+    position: sticky;
+    top: 0px;
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    align-items: center;
+    height: 30px;
+    background-color: mediumslateblue;
+    margin: 0 0;
+}
+
+.nav_right {
+    display: flex;
+    flex-direction: row;
+    background-color: seagreen;
+    justify-content: space-around;
+    align-items: center;
+}
+
+.nav_element {}
+
+.nav_link {
+    text-decoration: none;
+}
