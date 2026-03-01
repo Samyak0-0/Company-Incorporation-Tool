@@ -1,14 +1,20 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
+import "./Form1.css";
+import { Context } from "../utils/ContextProvider";
 
 function Form1() {
+  const { setNoOfHolders } = useContext(Context);
   const [formData, setFormData] = useState({
     name: "",
     capital: "",
-    age: "",
+    noOfHolders: "",
   });
 
   const handleChange = (e) => {
     const { name, value } = e.target;
+    if (name == "noOfHolders") {
+      setNoOfHolders(value);
+    }
     setFormData({
       ...formData,
       [name]: value,
@@ -17,10 +23,10 @@ function Form1() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log("Form Data:", formData);
+    // console.log("Form Data:", formData);
     alert(`Name: ${formData.name}
         Capital: ${formData.capital}
-        Age: ${formData.age}`);
+        NoOfHolders: ${formData.noOfHolders}`);
   };
 
   return (
@@ -42,23 +48,15 @@ function Form1() {
           <br />
           <input
             type="number"
-            name="age"
-            value={formData.age}
+            name="noOfHolders"
+            value={formData.noOfHolders}
             onChange={handleChange}
             required
           />
         </div>
 
         <div style={{ marginBottom: "15px" }}>
-          <label>
-            Capital
-            <span
-              className="italic text-base"
-              style={{ color: "var(--color-secondary)" }}
-            >
-              (in Rs)
-            </span>
-          </label>
+          <label>Capital</label>
           <br />
           <input
             type="number"

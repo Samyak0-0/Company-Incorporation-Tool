@@ -1,8 +1,12 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import "./Incorporate.css";
 import Form1 from "../components/Form1";
+import Form2 from "../components/Form2";
+import FlagSelect from "../utils/FlagSelect";
+import { Context } from "../utils/ContextProvider";
 
 function StepProgress({ steps, current }) {
+  const { formStep, setFormStep } = useContext(Context);
   return (
     <div className="grid grid-rows-2 items-center justify-center relative">
       <div className="flex flex-row justify-center pl-8 pr-4 items-center">
@@ -27,6 +31,7 @@ function StepProgress({ steps, current }) {
                         ? "step-circle-active"
                         : "step-circle-upcoming"
                     } ${isActive ? "step-circle-ring" : ""}`}
+                    onClick={() => setFormStep(step.id)}
                   >
                     {isCompleted ? (
                       <svg
@@ -59,6 +64,7 @@ function StepProgress({ steps, current }) {
           const isActive = step.id === current;
           return (
             <div
+              key={step.id}
               className={`text-sm font-medium text-center  transition-colors duration-300`}
               style={{
                 color:
@@ -80,6 +86,7 @@ function StepProgress({ steps, current }) {
 
 function Incorporate() {
   const [current, setCurrent] = useState(1);
+  const { formStep, setFormStep } = useContext(Context);
 
   const steps = [
     { id: 1, label: "Company Information" },
@@ -87,24 +94,30 @@ function Incorporate() {
     { id: 3, label: "Review & Submit" },
   ];
 
+  function handleSubmit() {
+    setFormStep((c) => Math.min(steps.length, c + 1));
+  }
   return (
     <div className="incorporate">
       <div className="progress-bar">
         <div className="form-box w-9/10">
           <h2 className="text-4xl my-4 text-center">Incorporation Form</h2>
-          <StepProgress steps={steps} current={current} />
-          <Form1 />
+          <StepProgress steps={steps} current={formStep} />
+          {formStep == 1 ? (
+            <Form1 />
+          ) : formStep == 2 ? (
+            <Form2 />
+          ) : (
+            <FlagSelect />
+          )}
           <div className="flex gap-2.5 mt-9 justify-center">
             <button
-              onClick={() => setCurrent((c) => Math.max(1, c - 1))}
+              onClick={() => setFormStep((c) => Math.max(1, c - 1))}
               className="btn-back"
             >
               ← Back
             </button>
-            <button
-              onClick={() => setCurrent((c) => Math.min(steps.length, c + 1))}
-              className="btn-next"
-            >
+            <button onClick={handleSubmit} className="btn-next">
               Next →
             </button>
           </div>

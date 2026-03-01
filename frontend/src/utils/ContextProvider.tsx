@@ -3,9 +3,19 @@ import { createContext, useState } from "react";
 const Context = createContext();
 
 const ContextProvider = ({ children }) => {
-  const [menu, setMenu] = useState(false);
+  const [noOfHolders, setNoOfHolders] = useState(0);
+  const [formStep, setFormStep] = useState(1);
   return (
-    <Context.Provider value={{ menu, setMenu }}>{children}</Context.Provider>
+    <Context.Provider
+      value={{
+        noOfHolders,
+        setNoOfHolders,
+        formStep,
+        setFormStep,
+      }}
+    >
+      {children}
+    </Context.Provider>
   );
 };
 
