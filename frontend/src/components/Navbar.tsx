@@ -38,7 +38,7 @@ const Navbar = () => {
       <div className="navbar">
         <div className="nav_element ml-3 mt-3">
           <Link to={"/"} className="nav_link2 text-5xl ">
-            IncorpForm
+            IncorpFirm
           </Link>
         </div>
         <div className="nav_right text-lg">

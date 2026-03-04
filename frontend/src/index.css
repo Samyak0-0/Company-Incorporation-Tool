@@ -22,3 +22,8 @@ body {
     background-color: var(--color-bg);
     color: var(--color-primary);
 }
+
+.reset-buttons {
+    color: var(--color-bg);
+    cursor: pointer;
+}

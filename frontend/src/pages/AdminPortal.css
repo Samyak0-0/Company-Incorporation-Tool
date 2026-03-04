@@ -1,6 +1,477 @@
 .admin-portal {
-    display: grid;
-    height: calc(100vh - 30px);
+    display: flex;
+    height: calc(100vh - 70px);
     /* grid-template-columns: 1fr 1fr; */
     /* place-items: center; */
+    justify-content: center;
+    background: var(--color-bg);
+    margin-top: 40px;
+    width: 100vw;
+}
+
+.admin-container {
+    width: 90%;
+    height: calc(100% - 20px);
+    background: var(--color-surface);
+    margin: 5px 5px;
+    border-radius: 12px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+    padding: 40px;
+}
+
+.admin-title {
+    font-size: 3rem;
+    font-weight: 600;
+    margin-bottom: 10px;
+    text-align: center;
+}
+
+.toggle-container {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 30px;
+    padding: 4px;
+    border-radius: 8px;
+    width: fit-content;
+}
+
+.toggle-btn {
+    padding: 10px 24px;
+    border: none;
+    background: transparent;
+    color: #666;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    border-radius: 6px;
+    transition: all 0.3s ease;
+    text-transform: capitalize;
+}
+
+.toggle-btn:hover {
+    background: rgba(234, 104, 102, 0.1);
+    color: #ea6f66;
+}
+
+.toggle-btn.active {
+    background: var(--color-accent);
+    color: var(--color-bg);
+    box-shadow: 0 4px 12px rgba(234, 104, 102, 0.4);
+}
+
+/* Content Area */
+.content-area {
+    margin-top: 30px;
+}
+
+.data-container {
+    animation: fadeIn 0.3s ease;
+}
+
+.data-container h2 {
+    font-size: 20px;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 20px;
+}
+
+.table-wrapper {
+    overflow-x: auto;
+    border: 2px solid var(--color-primary);
+}
+
+.data-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+}
+
+.data-table thead {
+    background: var(--color-accent);
+    border-bottom: 2px solid var(--color-primary);
+}
+
+.data-table th {
+    padding: 16px 12px;
+    text-align: left;
+    font-weight: 600;
+    color: var(--color-bg);
+    word-break: break-word;
+    border-right: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.data-table th:last-child {
+    border-right: none;
+}
+
+.data-table td {
+    padding: 14px 12px;
+    border-bottom: 1px solid var(--color-secondary);
+    border-right: 1px solid var(--color-secondary);
+    color: var(--color-primary);
+    word-break: break-word;
+}
+
+.data-table td:last-child {
+    border-right: none;
+}
+
+.data-table tbody tr {
+    background-color: var(--color-bg);
+}
+
+.data-table tbody tr:hover {
+    background: #fffafaa7;
+}
+
+.data-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+/* Loading and Error States */
+.loading {
+    text-align: center;
+    padding: 40px 20px;
+    font-size: 16px;
+    color: #667eea;
+    font-weight: 600;
+}
+
+.error {
+    background: #fee;
+    color: #c33;
+    padding: 16px;
+    border-radius: 8px;
+    border-left: 4px solid #c33;
+    margin-bottom: 20px;
+}
+
+.no-data {
+    text-align: center;
+    padding: 40px 20px;
+    font-size: 16px;
+    color: #999;
+}
+
+.data-table tr td {
+    cursor: pointer;
+}
+
+/* Animation */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* .hover-buttons { */
+/*     display: none; */
+/* } */
+/**/
+/* .hover-buttons:hover { */
+/*     display: block  ; */
+/* } */
+
+/* Responsive */
+@media (max-width: 768px) {
+    .admin-container {
+        padding: 20px;
+    }
+
+    .admin-title {
+        font-size: 24px;
+        margin-bottom: 20px;
+    }
+
+    .toggle-container {
+        margin-bottom: 20px;
+    }
+
+    .toggle-btn {
+        padding: 8px 16px;
+        font-size: 13px;
+    }
+
+
+    .data-table {
+        font-size: 12px;
+    }
+
+    .data-table th,
+    .data-table td {
+        padding: 10px 8px;
+    }
+}
+
+/* Modal Styles */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    animation: fadeIn 0.3s ease;
+}
+
+.modal-content {
+    background: var(-color-bg);
+    border-radius: 12px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    max-width: 800px;
+    width: 90%;
+    max-height: 85vh;
+    overflow-y: auto;
+    animation: slideUp 0.3s ease;
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 24px;
+    border-bottom: 2px solid var(--color-secondary);
+    position: sticky;
+    top: 0;
+    background: var(--color-bg);
+    z-index: 10;
+}
+
+.modal-header h2 {
+    margin: 0;
+    font-size: 24px;
+    font-weight: 600;
+    color: var(--color-primary);
+}
+
+.modal-close-btn {
+    background: none;
+    border: none;
+    font-size: 28px;
+    cursor: pointer;
+    color: #999;
+    transition: color 0.2s ease;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal-close-btn:hover {
+    color: var(--color-accent);
+}
+
+.modal-loading {
+    padding: 40px;
+    text-align: center;
+    color: #667eea;
+    font-weight: 600;
+}
+
+.modal-body {
+    background-color: var(--color-bg);
+    padding: 24px;
+}
+
+.modal-section {
+    margin-bottom: 32px;
+}
+
+.modal-section:last-child {
+    margin-bottom: 0;
+}
+
+.modal-section h3 {
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--color-primary);
+    margin-bottom: 16px;
+    padding-bottom: 12px;
+    border-bottom: 2px solid var(--color-secondary);
+}
+
+.info-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+}
+
+.info-item {
+    display: flex;
+    flex-direction: column;
+}
+
+.info-item label {
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: #999;
+    margin-bottom: 6px;
+    letter-spacing: 0.5px;
+}
+
+.info-item p {
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--color-primary);
+    margin: 0;
+    word-break: break-word;
+}
+
+.shareholders-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 16px;
+}
+
+.shareholder-card {
+    background: #f5f5f5;
+    border: 1px solid var(--color-secondary);
+    border-radius: 8px;
+    padding: 16px;
+    transition: all 0.3s ease;
+}
+
+.shareholder-card:hover {
+    background: #fafafa;
+    border-color: var(--color-accent);
+    box-shadow: 0 4px 12px rgba(234, 104, 102, 0.1);
+}
+
+.shareholder-header {
+    margin-bottom: 12px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--color-secondary);
+}
+
+.shareholder-header h4 {
+    margin: 0;
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--color-primary);
+}
+
+.shareholder-info {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.shareholder-info .info-item {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 12px;
+}
+
+.shareholder-info .info-item label {
+    flex-shrink: 0;
+    margin-bottom: 0;
+    min-width: 100px;
+}
+
+.shareholder-info .info-item p {
+    text-align: right;
+}
+
+.company-row {
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+/* Shareholders Table in Modal */
+.shareholders-table-wrapper {
+    overflow-x: auto;
+    margin-bottom: 15px;
+    border: 1px solid var(--color-secondary);
+    border-radius: 6px;
+}
+
+.shareholders-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 0;
+}
+
+/* .shareholders-table thead { */
+/*     background-color: var(--color-accent); */
+/*     color: var(--color-bg); */
+/* } */
+
+/* .shareholders-table thead th { */
+/*     padding: 12px; */
+/*     text-align: left; */
+/*     font-weight: 600; */
+/*     font-size: 0.9rem; */
+/*     letter-spacing: 0.5px; */
+/* } */
+/**/
+/* .shareholders-table tbody td { */
+/*     padding: 10px 12px; */
+/*     border-bottom: 1px solid #ecf0f1; */
+/*     font-size: 0.9rem; */
+/* } */
+/**/
+/* .shareholders-table tbody tr { */
+/*     background-color: var(--color-bg); */
+/* } */
+/**/
+
+@media (max-width: 768px) {
+    .modal-content {
+        max-width: 95%;
+        max-height: 90vh;
+    }
+
+    .modal-header {
+        padding: 16px;
+    }
+
+    .modal-header h2 {
+        font-size: 20px;
+    }
+
+    .modal-body {
+        padding: 16px;
+    }
+
+    .info-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .shareholders-list {
+        grid-template-columns: 1fr;
+    }
+
+    .shareholder-info .info-item {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .shareholder-info .info-item p {
+        text-align: left;
+    }
 }

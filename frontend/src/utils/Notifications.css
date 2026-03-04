@@ -1,0 +1,237 @@
+  .toast-container {
+      position: fixed;
+      top: 1.25rem;
+      right: 1.25rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.6rem;
+      z-index: 9999;
+      pointer-events: none;
+  }
+
+  .toast {
+      pointer-events: all;
+      position: relative;
+      width: 320px;
+      background: #141720;
+      border-radius: 6px;
+      overflow: hidden;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6), 0 2px 8px rgba(0, 0, 0, 0.4);
+      animation: slideIn 0.35s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  }
+
+  .toast.exiting {
+      animation: slideOut 0.3s ease-in forwards;
+  }
+
+  .toast::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 3px;
+  }
+
+  .toast.success::before {
+      background: #22c55e;
+  }
+
+  .toast.warning::before {
+      background: #f59e0b;
+  }
+
+  .toast.error::before {
+      background: #ef4444;
+  }
+
+  /* .toast.info::before    { background: #3b82f6; } */
+
+  .toast-progress {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      height: 2px;
+      animation: progress linear forwards;
+  }
+
+  .toast.success .toast-progress {
+      background: #22c55e;
+  }
+
+  .toast.warning .toast-progress {
+      background: #f59e0b;
+  }
+
+  .toast.error .toast-progress {
+      background: #ef4444;
+  }
+
+  /* .toast.info    .toast-progress { background: #3b82f6; } */
+
+  .toast-body {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.75rem;
+      padding: 0.85rem 2.5rem 0.85rem 1.1rem;
+  }
+
+  .toast-icon {
+      flex-shrink: 0;
+      width: 22px;
+      height: 22px;
+      margin-top: 1px;
+  }
+
+  .toast-text {
+      flex: 1;
+  }
+
+  .toast-title {
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 1.05rem;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+      line-height: 1.2;
+      margin-bottom: 0.2rem;
+  }
+
+  .toast.success .toast-title {
+      color: #4ade80;
+  }
+
+  .toast.warning .toast-title {
+      color: #fbbf24;
+  }
+
+  .toast.error .toast-title {
+      color: #f87171;
+  }
+
+  /* .toast.info    .toast-title { color: #60a5fa; } */
+
+  .toast-message {
+      font-size: 0.82rem;
+      color: #a0aabf;
+      line-height: 1.4;
+      font-weight: 500;
+  }
+
+  .toast-close {
+      position: absolute;
+      top: 0.5rem;
+      right: 0.55rem;
+      background: none;
+      border: none;
+      color: #5a6380;
+      font-size: 1.1rem;
+      cursor: pointer;
+      line-height: 1;
+      padding: 2px 4px;
+      border-radius: 3px;
+      transition: color 0.15s;
+  }
+
+  .toast-close:hover {
+      color: #d1d5e8;
+  }
+
+  @keyframes slideIn {
+      from {
+          opacity: 0;
+          transform: translateX(110%);
+      }
+
+      to {
+          opacity: 1;
+          transform: translateX(0);
+      }
+  }
+
+  @keyframes slideOut {
+      from {
+          opacity: 1;
+          transform: translateX(0);
+          max-height: 120px;
+          margin-bottom: 0;
+      }
+
+      to {
+          opacity: 0;
+          transform: translateX(110%);
+          max-height: 0;
+          margin-bottom: -0.6rem;
+      }
+  }
+
+  @keyframes progress {
+      from {
+          width: 100%;
+      }
+
+      to {
+          width: 0%;
+      }
+  }
+
+  .demo {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1.5rem;
+  }
+
+  .demo-title {
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 1.6rem;
+      font-weight: 700;
+      color: #d1d5e8;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+  }
+
+  .demo-buttons {
+      display: flex;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+      justify-content: center;
+  }
+
+  .btn {
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 0.95rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      padding: 0.55rem 1.3rem;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: filter 0.15s, transform 0.1s;
+  }
+
+  .btn:hover {
+      filter: brightness(1.15);
+      transform: translateY(-1px);
+  }
+
+  .btn:active {
+      transform: translateY(0);
+  }
+
+  .btn-success {
+      background: #16a34a;
+      color: #f0fdf4;
+  }
+
+  .btn-warning {
+      background: #d97706;
+      color: #fffbeb;
+  }
+
+  .btn-error {
+      background: #dc2626;
+      color: #fef2f2;
+  }
+
+  /* .btn-info    { background: #2563eb; color: #eff6ff; } */

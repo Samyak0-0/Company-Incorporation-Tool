@@ -1,3 +1,18 @@
 input {
-    border: 2px solid black;
+    border: 2px solid var(--color-primary);
+    background-color: var(--color-bg);
+    border-radius: 5px;
+    /* width: 100%; */
+}
+
+form label {
+    font-size: 1.5rem;
+}
+
+label span {
+    color: var(--color-accent);
+}
+
+.fields {
+    font-size: 1.875rem;
 }

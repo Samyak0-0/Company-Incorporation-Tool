@@ -40,7 +40,7 @@ function Homepage() {
   return (
     <div className="homepage">
       <div className="word-content ml-8 ">
-        <div className="text-6xl mb-8">IncorpForm</div>
+        <div className="text-6xl mb-8">IncorpFirm</div>
         <div className="subtext italic text-lg mb-8">
           <FaQuoteLeft className="inline align-middle mr-3" />
           Incorporate your Company or Business Online within 10mins. <br />
