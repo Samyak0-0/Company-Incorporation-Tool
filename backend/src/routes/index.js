@@ -1,7 +1,7 @@
 import express from "express";
 import companyRoutes from "./companyRoutes.js";
 import loginRoutes from "./loginRoutes.js";
-import logsRoutes from "./loginRoutes.js";
+import logsRoutes from "./logsRoutes.js";
 import shareholderRoutes from "./shareholderRoutes.js";
 
 const router = express.Router();

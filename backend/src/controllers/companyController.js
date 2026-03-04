@@ -2,12 +2,13 @@ import * as companyService from "../services/companyService.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
 
 export const createCompany = asyncHandler(async (req, res) => {
-  const { name, no_of_holders, capital } = req.body;
+  const { name, noOfHolders, capital, holders } = req.body;
 
   const company = await companyService.createCompany({
     name,
-    no_of_holders,
+    noOfHolders,
     capital,
+    holders,
   });
 
   res.status(201).json({
@@ -36,7 +37,9 @@ export const getCompanyById = asyncHandler(async (req, res) => {
 
 export const getAllCompanies = asyncHandler(async (req, res) => {
   const { page, filers } = req.params;
-  const companies = await companyService.getAllCompanies();
+  const { data = "compact" } = req.query;
+  const includeShareholders = data === "full";
+  const companies = await companyService.getAllCompanies(includeShareholders);
 
   res.status(200).json({
     success: true,
@@ -46,12 +49,13 @@ export const getAllCompanies = asyncHandler(async (req, res) => {
 
 export const updateCompany = asyncHandler(async (req, res) => {
   const { id } = req.params;
-  const { name, no_of_holders, capital } = req.body;
+  const { name, noOfHolders, capital, holders } = req.body;
 
   const company = await companyService.updateCompany(id, {
     name,
-    no_of_holders,
+    no_of_holders: noOfHolders,
     capital,
+    holders,
   });
 
   if (!company) {

@@ -3,7 +3,7 @@ import cors from "cors";
 import { config } from "./config/env.js";
 import { requestLogger } from "./middleware/requestLogger.js";
 import { errorHandler } from "./middleware/errorHandler.js";
-import appRouter from "./routes/router.js";
+import appRouter from "./routes/index.js";
 import { initDB } from "./db/connection.js";
 import { initTables } from "./db/initTables.js";
 
@@ -26,13 +26,12 @@ const startServer = async () => {
       console.log(`Server is running on http://localhost:${config.port}
 Environment: ${config.nodeEnv}
 Database: ${config.db.host}:${config.db.port}/${config.db.name}`);
-        
-});
+    });
   } catch (err) {
     console.error("Failed to start server:", err);
     process.exit(1);
   }
-}
+};
 
 startServer();
 
