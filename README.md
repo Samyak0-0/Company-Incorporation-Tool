@@ -57,19 +57,21 @@ DB_PASSWORD=your_postgresql_password
 
 ## Running the Application
 
-**1. Start the backend server**
+**1. Install the Dependencies and Start the backend server**
 
 ```bash
 cd backend
+npm i
 npm start
 ```
 
 > The API will be available at `http://localhost:3000/api/`
 
-**2. In a new terminal, start the frontend**
+**2. In a new terminal, install the Dependencies and Start the frontend**
 
 ```bash
 cd frontend
+npm i
 npm run dev
 ```
 
