@@ -43,8 +43,13 @@ export const getCompanyById = async (id) => {
   return company;
 };
 
-export const getAllCompanies = async (includeShareholders = false) => {
-  const result = await query("SELECT * FROM company ORDER BY created_at DESC");
+export const getAllCompanies = async (includeShareholders = false, sortBy = "created_at", sortOrder = "desc") => {
+  // Validate sortBy to prevent SQL injection
+  const validColumns = ["id", "name", "no_of_holders", "capital", "created_at"];
+  const column = validColumns.includes(sortBy) ? sortBy : "created_at";
+  const order = sortOrder.toUpperCase() === "ASC" ? "ASC" : "DESC";
+  
+  const result = await query(`SELECT * FROM company ORDER BY ${column} ${order}`);
   const companies = result.rows;
   
   if (includeShareholders) {

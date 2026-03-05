@@ -37,9 +37,13 @@ export const getCompanyById = asyncHandler(async (req, res) => {
 
 export const getAllCompanies = asyncHandler(async (req, res) => {
   const { page, filers } = req.params;
-  const { data = "compact" } = req.query;
+  const { data = "compact", sortBy = "created_at", sortOrder = "desc" } = req.query;
   const includeShareholders = data === "full";
-  const companies = await companyService.getAllCompanies(includeShareholders);
+  const companies = await companyService.getAllCompanies(
+    includeShareholders,
+    sortBy,
+    sortOrder,
+  );
 
   res.status(200).json({
     success: true,

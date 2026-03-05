@@ -8,6 +8,7 @@ import { getCountryName } from "../utils/countryNames";
 import { Link } from "react-router";
 import { useNavigate } from "react-router";
 import { Context } from "../utils/ContextProvider";
+import FlagSelect from "../utils/FlagSelect";
 
 interface Company {
   id: number;
@@ -33,6 +34,14 @@ interface DetailedCompany extends Company {
   shareholders: Shareholder[];
 }
 
+interface EditingShareHolder {
+  id: number;
+  first_name: string;
+  last_name: string;
+  nationality: string;
+  company_name: string;
+}
+
 const AdminPortal = () => {
   const [activeTab, setActiveTab] = useState<"company" | "shareholders">(
     "company",
@@ -44,6 +53,12 @@ const AdminPortal = () => {
   const [selectedCompany, setSelectedCompany] =
     useState<DetailedCompany | null>(null);
   const [modalLoading, setModalLoading] = useState(false);
+  const [companySortColumn, setCompanySortColumn] = useState<string>("created_at");
+  const [companySortOrder, setCompanySortOrder] = useState<"asc" | "desc">("desc");
+  const [shareholderSortColumn, setShareholderSortColumn] = useState<string>("company_name");
+  const [shareholderSortOrder, setShareholderSortOrder] = useState<"asc" | "desc">("asc");
+  const [editingShareholder, setEditingShareholder] = useState<EditingShareHolder | null>(null);
+  const [editFormData, setEditFormData] = useState({ firstName: "", lastName: "", nationality: "" });
   const navigate = useNavigate();
   const {
     setForm1Data,
@@ -79,7 +94,9 @@ const AdminPortal = () => {
     setLoading(true);
     setError(null);
     try {
-      const response = await fetch("http://localhost:3000/api/company");
+      const response = await fetch(
+        `http://localhost:3000/api/company?sortBy=${companySortColumn}&sortOrder=${companySortOrder}`,
+      );
       if (!response.ok) throw new Error("Failed to fetch company data");
       const result = await response.json();
       const companies = result.success && result.data ? result.data : [];
@@ -100,7 +117,9 @@ const AdminPortal = () => {
     setLoading(true);
     setError(null);
     try {
-      const response = await fetch("http://localhost:3000/api/shareholders");
+      const response = await fetch(
+        `http://localhost:3000/api/shareholders?sortBy=${shareholderSortColumn}&sortOrder=${shareholderSortOrder}`,
+      );
       if (!response.ok) throw new Error("Failed to fetch shareholders data");
       const result = await response.json();
       const shareholders = result.success && result.data ? result.data : [];
@@ -147,6 +166,32 @@ const AdminPortal = () => {
     resetForm();
     setFormState("POST");
     navigate("/incorporate");
+  };
+
+  const handleCompanyColumnSort = (columnName: string) => {
+    if (columnName === "S.N.") return; // Don't sort by S.N.
+
+    if (companySortColumn === columnName) {
+      // If clicking the same column, toggle order
+      setCompanySortOrder(companySortOrder === "asc" ? "desc" : "asc");
+    } else {
+      // If clicking a new column, sort ascending by default
+      setCompanySortColumn(columnName);
+      setCompanySortOrder("asc");
+    }
+  };
+
+  const handleShareholderColumnSort = (columnName: string) => {
+    if (columnName === "S.N.") return; // Don't sort by S.N.
+
+    if (shareholderSortColumn === columnName) {
+      // If clicking the same column, toggle order
+      setShareholderSortOrder(shareholderSortOrder === "asc" ? "desc" : "asc");
+    } else {
+      // If clicking a new column, sort ascending by default
+      setShareholderSortColumn(columnName);
+      setShareholderSortOrder("asc");
+    }
   };
 
   const editCompany = async (companyId: number) => {
@@ -217,14 +262,68 @@ const AdminPortal = () => {
     }
   };
 
-  // Fetch data when tab changes
+  // Open edit modal for shareholder
+  const openEditShareholderModal = (shareholder: Shareholder) => {
+    setEditingShareholder(shareholder as unknown as EditingShareHolder);
+    setEditFormData({
+      firstName: shareholder.first_name,
+      lastName: shareholder.last_name,
+      nationality: shareholder.nationality,
+    });
+  };
+
+  // Close edit modal
+  const closeEditShareholderModal = () => {
+    setEditingShareholder(null);
+    setEditFormData({ firstName: "", lastName: "", nationality: "" });
+  };
+
+  // Update shareholder
+  const updateShareholder = async () => {
+    if (!editingShareholder) return;
+
+    if (!editFormData.firstName || !editFormData.lastName || !editFormData.nationality) {
+      setError("All fields are required");
+      return;
+    }
+
+    try {
+      const response = await fetch(
+        `http://localhost:3000/api/shareholders/${editingShareholder.id}`,
+        {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            firstName: editFormData.firstName,
+            lastName: editFormData.lastName,
+            nationality: editFormData.nationality,
+          }),
+        },
+      );
+
+      if (!response.ok) {
+        throw new Error("Failed to update shareholder");
+      }
+
+      await fetchShareholdersData();
+      closeEditShareholderModal();
+    } catch (err) {
+      setError(
+        err instanceof Error
+          ? err.message
+          : "An error occurred while updating shareholder",
+      );
+    }
+  };
+
+  // Fetch data when tab changes or sort parameters change
   useEffect(() => {
     if (activeTab === "company") {
       fetchCompanyData();
     } else {
       fetchShareholdersData();
     }
-  }, [activeTab]);
+  }, [activeTab, companySortColumn, companySortOrder, shareholderSortColumn, shareholderSortOrder]);
 
   return (
     <div className="admin-portal">
@@ -281,7 +380,21 @@ const AdminPortal = () => {
                             .filter(
                               (key) => key !== "id" && key !== "updated_at",
                             )
-                            .map((key) => <th key={key}>{key}</th>)}
+                            .map((key) => (
+                              <th
+                                key={key}
+                                onClick={() => handleCompanyColumnSort(key)}
+                                style={{ cursor: "pointer", userSelect: "none" }}
+                                title="Click to sort"
+                              >
+                                {key}
+                                {companySortColumn === key && (
+                                  <span style={{float: "right", color:"var(--color-bg)", marginRight: "2px" }}>
+                                    {companySortOrder === "asc" ? "▲" : "▼"}
+                                  </span>
+                                )}
+                              </th>
+                            ))}
                       </tr>
                     </thead>
                     <tbody>
@@ -352,7 +465,21 @@ const AdminPortal = () => {
                               (key) => key !== "id" && key !== "company_id",
                             )
                             .map((key) => {
-                              return <th key={key}>{key}</th>;
+                              return (
+                                <th
+                                  key={key}
+                                  onClick={() => handleShareholderColumnSort(key)}
+                                  style={{ cursor: "pointer", userSelect: "none" }}
+                                  title="Click to sort"
+                                >
+                                  {key}
+                                  {shareholderSortColumn === key && (
+                                  <span style={{float: "right", color:"var(--color-bg)", marginRight: "2px" }}>
+                                      {shareholderSortOrder === "asc" ? "▲" : "▼"}
+                                    </span>
+                                  )}
+                                </th>
+                              );
                             })}
                       </tr>
                     </thead>
@@ -371,7 +498,14 @@ const AdminPortal = () => {
                                     <span className="flex justify-between">
                                       {String(value)}
                                       <span className="hover-buttons flex text-lg gap-2 ">
-                                        {/* <FaEdit /> */}
+                                        <FaEdit 
+                                          onClick={(e) => {
+                                            e.stopPropagation();
+                                            openEditShareholderModal(shareholder);
+                                          }}
+                                          style={{ cursor: "pointer" }}
+                                          title="Edit shareholder"
+                                        />
                                         <button
                                           onClick={() =>
                                             deleteShareholder(shareholder.id)
@@ -500,6 +634,103 @@ const AdminPortal = () => {
             </div>
           </div>
         )}
+
+        {/* Edit Shareholder Modal */}
+        {editingShareholder && (
+          <div
+            className="modal-overlay"
+            onClick={closeEditShareholderModal}
+          >
+            <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+              <div className="modal-header">
+                <h2>Edit Shareholder</h2>
+                <button
+                  className="modal-close-btn"
+                  onClick={closeEditShareholderModal}
+                  title="Close"
+                >
+                  <MdClose />
+                </button>
+              </div>
+
+              <div className="modal-body">
+                <div className="modal-section">
+                  <form className="space-y-4">
+                    <div className="form-group">
+                      <label htmlFor="firstName" className="block mb-2 font-semibold">
+                        First Name
+                      </label>
+                      <input
+                        id="firstName"
+                        type="text"
+                        value={editFormData.firstName}
+                        onChange={(e) =>
+                          setEditFormData({
+                            ...editFormData,
+                            firstName: e.target.value,
+                          })
+                        }
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                      />
+                    </div>
+
+                    <div className="form-group">
+                      <label htmlFor="lastName" className="block mb-2 font-semibold">
+                        Last Name
+                      </label>
+                      <input
+                        id="lastName"
+                        type="text"
+                        value={editFormData.lastName}
+                        onChange={(e) =>
+                          setEditFormData({
+                            ...editFormData,
+                            lastName: e.target.value,
+                          })
+                        }
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                      />
+                    </div>
+
+                    <div className="form-group">
+                      <label htmlFor="nationality" className="block mb-2 font-semibold">
+                        Nationality
+                      </label>
+                      <FlagSelect
+                        value={editFormData.nationality}
+                        onChange={(code) =>
+                          setEditFormData({
+                            ...editFormData,
+                            nationality: code,
+                          })
+                        }
+                      />
+                    </div>
+
+                    <div className="flex gap-4 justify-end mt-6">
+                      <button
+                        type="button"
+                        onClick={closeEditShareholderModal}
+                        className="px-4 py-2 bg-gray-300 text-gray-800 cursor-pointer rounded-md hover:-translate-y-0.5"
+                      >
+                        Cancel
+                      </button>
+                      <button
+                        type="button"
+                        onClick={updateShareholder}
+                        style={{ backgroundColor: "var(--color-accent)"}}
+                        className="px-4 py-2  text-white rounded-md hover:-translate-y-0.5 cursor-pointer"
+                      >
+                        Save Changes
+                      </button>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
       </div>
     </div>
   );
