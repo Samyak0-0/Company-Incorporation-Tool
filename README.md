@@ -64,6 +64,11 @@ cd backend
 npm i
 npm start
 ```
+**Or, using docker**
+```bash
+cd backend
+docker compose up --build
+```
 
 > The API will be available at `http://localhost:3000/api/`
 
