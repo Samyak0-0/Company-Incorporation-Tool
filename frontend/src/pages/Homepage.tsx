@@ -6,26 +6,31 @@ import { FaQuoteLeft } from "react-icons/fa";
 import { FaQuoteRight } from "react-icons/fa";
 import { useState, useRef } from "react";
 
+interface Position {
+  x: number;
+  y: number;
+}
+
 function Homepage() {
-  const magnetoRef = useRef(null);
+  const magnetoRef = useRef<HTMLDivElement>(null);
 
-  const [outerPos, setOuterPos] = useState({ x: 0, y: 0 });
-  const [textPos, setTextPos] = useState({ x: 0, y: 0 });
+  const [outerPos, setOuterPos] = useState<Position>({ x: 0, y: 0 });
+  const [textPos, setTextPos] = useState<Position>({ x: 0, y: 0 });
 
-  function activateMagneto(e) {
+  function activateMagneto(e: React.MouseEvent<HTMLDivElement>): void {
     const magneto = magnetoRef.current;
+    if (!magneto) return;
+
     const boundBox = magneto.getBoundingClientRect();
 
     const newX = (e.clientX - boundBox.left) / magneto.offsetWidth - 0.5;
     const newY = (e.clientY - boundBox.top) / magneto.offsetHeight - 0.5;
 
-    // Outer container moves less
     setOuterPos({
       x: newX * 20,
       y: newY * 20,
     });
 
-    // Text moves more (stronger magnetic effect)
     setTextPos({
       x: newX * 40,
       y: newY * 40,

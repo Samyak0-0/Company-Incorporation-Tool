@@ -7,7 +7,6 @@ import AdminPortal from "./pages/AdminPortal.tsx";
 import { RouterProvider } from "react-router";
 import NotFound from "./pages/NotFound.tsx";
 import Navbar from "./components/Navbar.tsx";
-import Footer from "./components/Footer.tsx";
 import { Outlet } from "react-router";
 
 const router = createBrowserRouter([

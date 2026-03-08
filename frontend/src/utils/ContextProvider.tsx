@@ -1,17 +1,50 @@
-import { createContext, useState, useEffect } from "react";
+import React, { createContext, useState, useEffect } from "react";
 
-const Context = createContext();
+interface Form1Data {
+  name: string;
+  capital: string;
+  noOfHolders: string;
+}
 
-const ContextProvider = ({ children }) => {
-  const [noOfHolders, setNoOfHolders] = useState(() => {
+export interface Form2DataItem {
+  firstName: string;
+  lastName: string;
+  nationality: string;
+}
+
+export interface ContextValue {
+  noOfHolders: number;
+  setNoOfHolders: React.Dispatch<React.SetStateAction<number>>;
+  formStep: number;
+  setFormStep: React.Dispatch<React.SetStateAction<number>>;
+  form1Data: Form1Data;
+  setForm1Data: React.Dispatch<React.SetStateAction<Form1Data>>;
+  form2Data: Form2DataItem[];
+  setForm2Data: React.Dispatch<React.SetStateAction<Form2DataItem[]>>;
+  resetForm: () => void;
+  resetSection: () => void;
+  formState: "PUT" | "POST";
+  setFormState: React.Dispatch<React.SetStateAction<"PUT" | "POST">>;
+  targetId: number;
+  setTargetId: React.Dispatch<React.SetStateAction<number>>;
+}
+
+const Context = createContext<ContextValue | undefined>(undefined);
+
+const ContextProvider: React.FC<{ children: React.ReactNode }> = ({
+  children,
+}) => {
+  const [noOfHolders, setNoOfHolders] = useState<number>(() => {
     const saved = localStorage.getItem("noOfHolders");
     return saved ? JSON.parse(saved) : 0;
   });
-  const [formStep, setFormStep] = useState(() => {
+
+  const [formStep, setFormStep] = useState<number>(() => {
     const saved = localStorage.getItem("formStep");
     return saved ? JSON.parse(saved) : 1;
   });
-  const [form1Data, setForm1Data] = useState(() => {
+
+  const [form1Data, setForm1Data] = useState<Form1Data>(() => {
     const saved = localStorage.getItem("form1Data");
     return saved
       ? JSON.parse(saved)
@@ -21,12 +54,11 @@ const ContextProvider = ({ children }) => {
           noOfHolders: "",
         };
   });
-  const [form2Data, setForm2Data] = useState(() => {
+  const [form2Data, setForm2Data] = useState<Form2DataItem[]>(() => {
     const saved = localStorage.getItem("form2Data");
     return saved ? JSON.parse(saved) : [];
   });
 
-  // Save to localStorage whenever state changes
   useEffect(() => {
     localStorage.setItem("noOfHolders", JSON.stringify(noOfHolders));
   }, [noOfHolders]);
@@ -73,7 +105,7 @@ const ContextProvider = ({ children }) => {
     }
   };
 
-  const [formState, setFormState] = useState("POST");
+  const [formState, setFormState] = useState<"POST" | "PUT">("POST");
   const [targetId, setTargetId] = useState(0);
 
   return (

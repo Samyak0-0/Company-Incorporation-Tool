@@ -1,6 +1,6 @@
 import { useContext } from "react";
 import "./Form1.css";
-import { Context } from "../utils/ContextProvider";
+import { Context, type ContextValue } from "../utils/ContextProvider";
 import { RiResetLeftLine } from "react-icons/ri";
 import { TfiReload } from "react-icons/tfi";
 import { useToast } from "../utils/Notifications";
@@ -13,13 +13,13 @@ function Form1() {
     setForm1Data,
     resetForm,
     resetSection,
-  } = useContext(Context);
+  } = useContext(Context) as ContextValue;
   const { toast } = useToast();
 
-  const handleChange = (e) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     if (name == "noOfHolders") {
-      setNoOfHolders(value);
+      setNoOfHolders(JSON.parse(value));
     }
     setForm1Data({
       ...form1Data,
@@ -61,7 +61,7 @@ function Form1() {
     return true;
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = (e: React.SubmitEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (validateForm()) {
       setFormStep(2);

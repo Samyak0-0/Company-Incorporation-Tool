@@ -3,12 +3,12 @@ import "./Incorporate.css";
 import Form1 from "../components/Form1";
 import Form2 from "../components/Form2";
 import Form3 from "../components/Form3";
-import { Context } from "../utils/ContextProvider";
+import { Context, type ContextValue } from "../utils/ContextProvider";
 import { StepProgress } from "../utils/StepProgress";
 import { FaCircleCheck } from "react-icons/fa6";
 
 function Incorporate() {
-  const { formStep, setFormStep } = useContext(Context);
+  const { formStep, setFormStep } = useContext(Context) as ContextValue;
 
   const steps = [
     { id: 1, label: "Company Information" },

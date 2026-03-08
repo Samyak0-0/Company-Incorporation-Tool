@@ -1,5 +1,5 @@
 import { useContext, useEffect, useState } from "react";
-import { Context } from "../utils/ContextProvider";
+import { Context, type ContextValue } from "../utils/ContextProvider";
 import FlagSelect from "../utils/FlagSelect";
 import { RiResetLeftLine } from "react-icons/ri";
 import { TfiReload } from "react-icons/tfi";
@@ -16,14 +16,14 @@ function Form2() {
     setForm2Data,
     resetSection,
     resetForm,
-  } = useContext(Context);
+  } = useContext(Context) as ContextValue;
   const { toast } = useToast();
   const [viewMode, setViewMode] = useState<"single" | "individual">("single");
   const [currentIndex, setCurrentIndex] = useState(0);
-  const placeholderArray = Array.from({ length: JSON.parse(noOfHolders) });
+  const placeholderArray = Array.from({ length: noOfHolders });
 
   useEffect(() => {
-    const holdersCount = JSON.parse(noOfHolders);
+    const holdersCount = noOfHolders;
 
     setForm2Data((prevData) => {
       if (prevData.length === holdersCount) return prevData;
@@ -41,12 +41,16 @@ function Form2() {
         return [...prevData, ...newEntries];
       }
 
-      // If decreased → trim extra entries
       return prevData.slice(0, holdersCount);
     });
-  }, [noOfHolders]);
+  }, [noOfHolders, setForm2Data]);
 
-  const handleChange = (e, index) => {
+  const handleChange = (
+    e:
+      | React.ChangeEvent<HTMLInputElement>
+      | { target: { name: string; value: string } },
+    index: number,
+  ) => {
     const { name, value } = e.target;
     setForm2Data((prev) => {
       const updated = [...prev];
@@ -87,7 +91,7 @@ function Form2() {
     return true;
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = (e: React.SubmitEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (validateForm()) {
       setFormStep(3);

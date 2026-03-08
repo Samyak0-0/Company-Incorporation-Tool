@@ -1,5 +1,5 @@
 import "./AdminPortal.css";
-import { useState, useEffect, useContext } from "react";
+import { useState, useEffect, useContext, useCallback } from "react";
 import { FaEdit } from "react-icons/fa";
 import { FaPlus } from "react-icons/fa6";
 import { RiDeleteBin6Line } from "react-icons/ri";
@@ -7,7 +7,7 @@ import { MdClose } from "react-icons/md";
 import { getCountryName } from "../utils/countryNames";
 import { Link } from "react-router";
 import { useNavigate } from "react-router";
-import { Context } from "../utils/ContextProvider";
+import { Context, type ContextValue } from "../utils/ContextProvider";
 import FlagSelect from "../utils/FlagSelect";
 
 interface Company {
@@ -68,9 +68,8 @@ const AdminPortal = () => {
     setFormState,
     setTargetId,
     resetForm,
-  } = useContext(Context);
+  } = useContext(Context) as ContextValue;
 
-  // Fetch detailed company data
   const fetchCompanyDetails = async (companyId: number) => {
     setModalLoading(true);
     try {
@@ -89,8 +88,7 @@ const AdminPortal = () => {
     }
   };
 
-  // Fetch company data
-  const fetchCompanyData = async () => {
+  const fetchCompanyData = useCallback( async () => {
     setLoading(true);
     setError(null);
     try {
@@ -110,10 +108,9 @@ const AdminPortal = () => {
     } finally {
       setLoading(false);
     }
-  };
-
-  // Fetch shareholders data
-  const fetchShareholdersData = async () => {
+  }, [companySortColumn, companySortOrder])
+                                      
+  const fetchShareholdersData = useCallback (async () => {
     setLoading(true);
     setError(null);
     try {
@@ -133,9 +130,8 @@ const AdminPortal = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [shareholderSortOrder, shareholderSortColumn])
 
-  // Delete company
   const deleteCompany = async (companyId: number) => {
     if (!window.confirm("Are you sure you want to delete this company?")) {
       return;
@@ -153,7 +149,6 @@ const AdminPortal = () => {
         throw new Error("Failed to delete company");
       }
 
-      // Refresh company data after deletion
       await fetchCompanyData();
     } catch (err) {
       setError(
@@ -162,33 +157,29 @@ const AdminPortal = () => {
     }
   };
 
-  const handleAdd = async (companyId: number) => {
+  const handleAdd = () => {
     resetForm();
     setFormState("POST");
     navigate("/incorporate");
   };
 
   const handleCompanyColumnSort = (columnName: string) => {
-    if (columnName === "S.N.") return; // Don't sort by S.N.
+    if (columnName === "S.N.") return; 
 
     if (companySortColumn === columnName) {
-      // If clicking the same column, toggle order
       setCompanySortOrder(companySortOrder === "asc" ? "desc" : "asc");
     } else {
-      // If clicking a new column, sort ascending by default
       setCompanySortColumn(columnName);
       setCompanySortOrder("asc");
     }
   };
 
   const handleShareholderColumnSort = (columnName: string) => {
-    if (columnName === "S.N.") return; // Don't sort by S.N.
+    if (columnName === "S.N.") return; 
 
     if (shareholderSortColumn === columnName) {
-      // If clicking the same column, toggle order
       setShareholderSortOrder(shareholderSortOrder === "asc" ? "desc" : "asc");
     } else {
-      // If clicking a new column, sort ascending by default
       setShareholderSortColumn(columnName);
       setShareholderSortOrder("asc");
     }
@@ -216,7 +207,7 @@ const AdminPortal = () => {
         noOfHolders: res.no_of_holders,
       });
       setForm2Data(
-        res.shareholders.map((holder) => ({
+        res.shareholders.map((holder: EditingShareHolder) => ({
           firstName: holder.first_name,
           lastName: holder.last_name,
           nationality: holder.nationality,
@@ -235,7 +226,6 @@ const AdminPortal = () => {
     }
   };
 
-  // Delete shareholder
   const deleteShareholder = async (shareholderId: number) => {
     if (!window.confirm("Are you sure you want to delete this shareholder?")) {
       return;
@@ -253,7 +243,6 @@ const AdminPortal = () => {
         throw new Error("Failed to delete shareholder");
       }
 
-      // Refresh shareholders data after deletion
       await fetchShareholdersData();
     } catch (err) {
       setError(
@@ -262,7 +251,6 @@ const AdminPortal = () => {
     }
   };
 
-  // Open edit modal for shareholder
   const openEditShareholderModal = (shareholder: Shareholder) => {
     setEditingShareholder(shareholder as unknown as EditingShareHolder);
     setEditFormData({
@@ -272,13 +260,11 @@ const AdminPortal = () => {
     });
   };
 
-  // Close edit modal
   const closeEditShareholderModal = () => {
     setEditingShareholder(null);
     setEditFormData({ firstName: "", lastName: "", nationality: "" });
   };
 
-  // Update shareholder
   const updateShareholder = async () => {
     if (!editingShareholder) return;
 
@@ -316,14 +302,13 @@ const AdminPortal = () => {
     }
   };
 
-  // Fetch data when tab changes or sort parameters change
   useEffect(() => {
     if (activeTab === "company") {
       fetchCompanyData();
     } else {
       fetchShareholdersData();
     }
-  }, [activeTab, companySortColumn, companySortOrder, shareholderSortColumn, shareholderSortOrder]);
+  }, [activeTab, companySortColumn, companySortOrder, shareholderSortColumn, shareholderSortOrder, fetchCompanyData, fetchShareholdersData]);
 
   return (
     <div className="admin-portal">
@@ -347,7 +332,6 @@ const AdminPortal = () => {
           </button>
         </div>
 
-        {/* Content Area */}
         <div className="content-area">
           {loading && <div className="loading">Loading...</div>}
           {error && <div className="error">Error: {error}</div>}
@@ -537,7 +521,6 @@ const AdminPortal = () => {
           )}
         </div>
 
-        {/* Company Details Modal */}
         {selectedCompany && (
           <div
             className="modal-overlay"
@@ -635,7 +618,6 @@ const AdminPortal = () => {
           </div>
         )}
 
-        {/* Edit Shareholder Modal */}
         {editingShareholder && (
           <div
             className="modal-overlay"

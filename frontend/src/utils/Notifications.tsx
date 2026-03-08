@@ -3,6 +3,22 @@ import { FaCircleCheck } from "react-icons/fa6";
 import { IoIosWarning } from "react-icons/io";
 import { MdError } from "react-icons/md";
 import "./Notifications.css";
+import type { Toast, ToastType } from "./ToastProvider";
+
+interface ToastProps extends Toast {
+  onRemove: (id: number) => void;
+}
+
+interface ToastContainerProps {
+  toasts: Toast[];
+  onRemove: (id: number) => void;
+}
+
+interface ToastContext {
+  success: (title: string, message: string) => void;
+  warning: (title: string, message: string) => void;
+  error: (title: string, message: string) => void;
+}
 
 const ICONS = {
   success: <FaCircleCheck />,
@@ -12,7 +28,7 @@ const ICONS = {
 
 const DURATION = 4000;
 
-const Toast = ({ id, type, title, message, onRemove }) => {
+const Toast = ({ id, type, title, message, onRemove }: ToastProps) => {
   const [exiting, setExiting] = useState(false);
 
   const dismiss = useCallback(() => {
@@ -45,7 +61,7 @@ const Toast = ({ id, type, title, message, onRemove }) => {
   );
 };
 
-export const ToastContainer = ({ toasts, onRemove }) => (
+export const ToastContainer = ({ toasts, onRemove }: ToastContainerProps) => (
   <div className="toast-container">
     {toasts.map((t) => (
       <Toast key={t.id} {...t} onRemove={onRemove} />
@@ -54,22 +70,21 @@ export const ToastContainer = ({ toasts, onRemove }) => (
 );
 
 export const useToast = () => {
-  const [toasts, setToasts] = useState([]);
+  const [toasts, setToasts] = useState<Toast[]>([]);
 
-  const add = useCallback((type, title, message) => {
+  const add = useCallback((type: ToastType, title: string, message: string) => {
     const id = Date.now() + Math.random();
     setToasts((prev) => [...prev, { id, type, title, message }]);
   }, []);
 
-  const remove = useCallback((id) => {
+  const remove = useCallback((id: number) => {
     setToasts((prev) => prev.filter((t) => t.id !== id));
   }, []);
 
-  const toast = {
+  const toast: ToastContext = {
     success: (title, msg) => add("success", title, msg),
     warning: (title, msg) => add("warning", title, msg),
     error: (title, msg) => add("error", title, msg),
-    // info: (title, msg) => add("info", title, msg),
   };
 
   const Container = useCallback(

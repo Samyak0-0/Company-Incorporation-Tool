@@ -27,3 +27,7 @@ body {
     color: var(--color-bg);
     cursor: pointer;
 }
+
+.hide {
+    display: none;
+}

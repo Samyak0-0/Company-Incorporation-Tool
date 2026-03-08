@@ -1,5 +1,5 @@
 import { useContext, useRef } from "react";
-import { Context } from "../utils/ContextProvider";
+import { Context, type ContextValue } from "../utils/ContextProvider";
 import { useToast } from "../utils/ToastProvider";
 import html2pdf from "html2pdf.js";
 import "./Form3.css";
@@ -9,24 +9,26 @@ import { useNavigate } from "react-router";
 import { TfiReload } from "react-icons/tfi";
 
 function Form3() {
-  const { form1Data, form2Data, resetForm, formState, targetId } =
-    useContext(Context);
+  const { form1Data, form2Data, resetForm, formState, targetId } = useContext(
+    Context,
+  ) as ContextValue;
   const { toast } = useToast();
-  const documentRef = useRef();
+  const documentRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
 
   const handleDownloadPDF = () => {
     const element = documentRef.current;
+    if (!element) return;
     const opt = {
       margin: 10,
       filename: `Incorporation_${form1Data.name}_${new Date().toISOString().split("T")[0]}.pdf`,
-      image: { type: "jpeg", quality: 0.98 },
+      image: { type: "jpeg" as const, quality: 0.98 },
       html2canvas: { scale: 2 },
-      jsPDF: { orientation: "portrait", unit: "mm", format: "a4" },
+      jsPDF: { orientation: "portrait" as const, unit: "mm", format: "a4" },
     };
     html2pdf().set(opt).from(element).save();
   };
-  const handleEdit = async (e) => {
+  const handleEdit = async (e: React.SubmitEvent<HTMLFormElement>) => {
     e.preventDefault();
     const reqBody = {
       ...form1Data,
@@ -63,7 +65,7 @@ function Form3() {
     }
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: React.SubmitEvent<HTMLFormElement>) => {
     e.preventDefault();
     const reqBody = {
       ...form1Data,

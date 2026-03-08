@@ -1,4 +1,3 @@
-// Map of country codes to full country names
 export const countryCodeToName: { [key: string]: string } = {
   AF: "Afghanistan",
   AL: "Albania",

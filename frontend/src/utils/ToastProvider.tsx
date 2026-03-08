@@ -1,14 +1,15 @@
 import { createContext, useContext, useCallback, useState } from "react";
 import { ToastContainer } from "./Notifications";
 
-interface Toast {
+export type ToastType = "success" | "warning" | "error";
+export interface Toast {
   id: number;
-  type: "success" | "warning" | "error";
+  type: ToastType;
   title: string;
   message: string;
 }
 
-interface ToastContextType {
+export interface ToastContextType {
   toast: {
     success: (title: string, message: string) => void;
     warning: (title: string, message: string) => void;
@@ -26,7 +27,7 @@ export const ToastProvider = ({ children }: { children: React.ReactNode }) => {
       const id = Date.now() + Math.random();
       setToasts((prev) => [...prev, { id, type, title, message }]);
     },
-    []
+    [],
   );
 
   const remove = useCallback((id: number) => {

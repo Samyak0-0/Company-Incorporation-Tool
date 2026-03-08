@@ -1,4 +1,15 @@
-export function StepProgress({ steps, current }) {
+interface Step {
+  id: number;
+  label: string;
+}
+
+export function StepProgress({
+  steps,
+  current,
+}: {
+  steps: Step[];
+  current: number;
+}) {
   return (
     <div className="grid grid-rows-2 items-center justify-center relative">
       <div className="flex flex-row justify-center pl-8 pr-4 items-center">
@@ -50,7 +61,7 @@ export function StepProgress({ steps, current }) {
         })}
       </div>
       <div className="flex flex-row justify-between items-center">
-        {steps.map((step, i) => {
+        {steps.map((step) => {
           const isCompleted = step.id < current;
           const isActive = step.id === current;
           return (
