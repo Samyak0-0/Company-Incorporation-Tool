@@ -1,5 +1,5 @@
 import { Link } from "react-router";
-import "./Homepage.css";
+import styles from "./Homepage.module.css";
 import incorporate from "../assets/images/incorporate.jpg";
 import { FaArrowRight } from "react-icons/fa";
 import { FaQuoteLeft } from "react-icons/fa";
@@ -43,10 +43,10 @@ function Homepage() {
   }
 
   return (
-    <div className="homepage">
-      <div className="word-content ml-8 ">
+    <div className={styles.homepage}>
+      <div className={`${styles["word-content"]} ml-8 `}>
         <div className="text-6xl mb-8">IncorpFirm</div>
-        <div className="subtext italic text-lg mb-8">
+        <div className={`${styles.subtext} italic text-lg mb-8`}>
           <FaQuoteLeft className="inline align-middle mr-3" />
           Incorporate your Company or Business Online within 10mins. <br />
           Ease the Hassle and Simplify the Traditional Company Incorporation
@@ -56,7 +56,7 @@ function Homepage() {
         <div>
           <Link to={"/incorporate"}>
             <div
-              className="call-to-action magneto flex cursor-pointer  items-center p-4"
+              className={`${styles["call-to-action"]} ${styles.magneto} flex cursor-pointer  items-center p-4`}
               ref={magnetoRef}
               style={{
                 transform: `translate(${outerPos.x}px, ${outerPos.y}px)`,
@@ -65,7 +65,7 @@ function Homepage() {
               onMouseLeave={resetMagneto}
             >
               <span
-                className="magneto-text"
+                className={styles["magneto-text"]}
                 style={{
                   transform: `translate(${textPos.x}px, ${textPos.y}px)`,
                 }}
@@ -73,7 +73,7 @@ function Homepage() {
                 Incorporate Now
               </span>{" "}
               <FaArrowRight
-                className=" magneto-text ml-4"
+                className={`${styles["magneto-text"]} ml-4`}
                 style={{
                   transform: `translate(${textPos.x}px, ${textPos.y}px)`,
                 }}
@@ -82,7 +82,7 @@ function Homepage() {
           </Link>
         </div>
       </div>
-      <div className="diamond-box">
+      <div className={styles["diamond-box"]}>
         <img src={incorporate} alt="company-people-working" />
       </div>
     </div>

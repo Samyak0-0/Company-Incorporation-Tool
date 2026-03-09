@@ -1,9 +1,9 @@
 import { useContext } from "react";
-import "./Form1.css";
-import { Context, type ContextValue } from "../utils/ContextProvider";
+import "./Form.module.css";
+import { Context, type ContextValue } from "../../utils/ContextProvider";
 import { RiResetLeftLine } from "react-icons/ri";
 import { TfiReload } from "react-icons/tfi";
-import { useToast } from "../utils/Notifications";
+import { useToast } from "../../utils/Notifications";
 
 function Form1() {
   const {

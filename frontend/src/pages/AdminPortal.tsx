@@ -1,4 +1,4 @@
-import "./AdminPortal.css";
+import styles from "./AdminPortal.module.css"
 import { useState, useEffect, useContext, useCallback } from "react";
 import { FaEdit } from "react-icons/fa";
 import { FaPlus } from "react-icons/fa6";
@@ -311,20 +311,20 @@ const AdminPortal = () => {
   }, [activeTab, companySortColumn, companySortOrder, shareholderSortColumn, shareholderSortOrder, fetchCompanyData, fetchShareholdersData]);
 
   return (
-    <div className="admin-portal">
-      <div className="admin-container">
-        <h1 className="admin-title">Admin Dashboard</h1>
+    <div className={styles["admin-portal"]}>
+      <div className={styles["admin-container"]}>
+        <h1 className={styles["admin-title"]}>Admin Dashboard</h1>
 
-        <div className="toggle-container">
+        <div className={styles["toggle-container"]}>
           <button
-            className={`toggle-btn ${activeTab === "company" ? "active" : ""}`}
+            className={`${styles["toggle-btn"]} ${activeTab === "company" ? styles.active : ""}`}
             onClick={() => setActiveTab("company")}
           >
             Company
           </button>
           <button
-            className={`toggle-btn ${
-              activeTab === "shareholders" ? "active" : ""
+            className={`${styles["toggle-btn"]} ${
+              activeTab === "shareholders" ? styles.active : ""
             }`}
             onClick={() => setActiveTab("shareholders")}
           >
@@ -332,12 +332,12 @@ const AdminPortal = () => {
           </button>
         </div>
 
-        <div className="content-area">
-          {loading && <div className="loading">Loading...</div>}
-          {error && <div className="error">Error: {error}</div>}
+        <div className={styles["content-area"]}>
+          {loading && <div className={styles["loading"]}>Loading...</div>}
+          {error && <div className={styles["error"]}>Error: {error}</div>}
 
           {!loading && !error && activeTab === "company" && (
-            <div className="data-container">
+            <div className={styles["data-container"]}>
               <div className="flex justify-between mb-2 items-baseline">
                 <h2>Company Data</h2>
                 <Link to={"/incorporate"}>
@@ -354,8 +354,8 @@ const AdminPortal = () => {
                 </Link>
               </div>
               {companyData.length > 0 ? (
-                <div className="table-wrapper">
-                  <table className="data-table">
+                <div className={styles["table-wrapper"]}>
+                  <table className={styles["data-table"]}>
                     <thead>
                       <tr>
                         <th>S.N.</th>
@@ -386,7 +386,7 @@ const AdminPortal = () => {
                         <tr
                           key={company.id}
                           onClick={() => fetchCompanyDetails(company.id)}
-                          className="company-row"
+                          className={styles["company-row"]}
                         >
                           <td>{index + 1}</td>
                           {Object.entries(company)
@@ -401,7 +401,7 @@ const AdminPortal = () => {
                                       .toISOString()
                                       .slice(0, 10)
                                       .replace(/-/g, "/")}
-                                    <span className="hover-buttons flex text-lg gap-2 ">
+                                    <span className={`${styles["hover-buttons"]} flex text-lg gap-2 `}>
                                       <FaEdit
                                         onClick={() => {
                                           editCompany(company.id);
@@ -411,7 +411,7 @@ const AdminPortal = () => {
                                         onClick={() =>
                                           deleteCompany(company.id)
                                         }
-                                        className="delete-btn hover:text-red-500 cursor-pointer"
+                                        className={`${styles["delete-btn"]} hover:text-red-500 cursor-pointer`}
                                         title="Delete company"
                                       >
                                         <RiDeleteBin6Line />
@@ -429,17 +429,17 @@ const AdminPortal = () => {
                   </table>
                 </div>
               ) : (
-                <p className="no-data">No company data available</p>
+                <p className={styles["no-data"]}>No company data available</p>
               )}
             </div>
           )}
 
           {!loading && !error && activeTab === "shareholders" && (
-            <div className="data-container">
+            <div className={styles["data-container"]}>
               <h2>Shareholders Data</h2>
               {shareholdersData.length > 0 ? (
-                <div className="table-wrapper">
-                  <table className="data-table">
+                <div className={styles["table-wrapper"]}>
+                  <table className={styles["data-table"]}>
                     <thead>
                       <tr>
                         <th>S.N.</th>
@@ -481,7 +481,7 @@ const AdminPortal = () => {
                                   {key === "company_name" ? (
                                     <span className="flex justify-between">
                                       {String(value)}
-                                      <span className="hover-buttons flex text-lg gap-2 ">
+                                      <span className={`${styles["hover-buttons"]} flex text-lg gap-2 `}>
                                         <FaEdit 
                                           onClick={(e) => {
                                             e.stopPropagation();
@@ -494,7 +494,7 @@ const AdminPortal = () => {
                                           onClick={() =>
                                             deleteShareholder(shareholder.id)
                                           }
-                                          className="delete-btn hover:text-red-500 cursor-pointer"
+                                          className={`${styles["delete-btn"]} hover:text-red-500 cursor-pointer`}
                                           title="Delete shareholder"
                                         >
                                           <RiDeleteBin6Line />
@@ -515,7 +515,7 @@ const AdminPortal = () => {
                   </table>
                 </div>
               ) : (
-                <p className="no-data">No shareholders data available</p>
+                <p className={styles["no-data"]}>No shareholders data available</p>
               )}
             </div>
           )}
@@ -523,14 +523,14 @@ const AdminPortal = () => {
 
         {selectedCompany && (
           <div
-            className="modal-overlay"
+            className={styles["modal-overlay"]}
             onClick={() => setSelectedCompany(null)}
           >
-            <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-              <div className="modal-header">
+            <div className={styles["modal-content"]} onClick={(e) => e.stopPropagation()}>
+              <div className={styles["modal-header"]}>
                 <h2>Company Details</h2>
                 <button
-                  className="modal-close-btn"
+                  className={styles["modal-close-btn"]}
                   onClick={() => setSelectedCompany(null)}
                   title="Close"
                 >
@@ -539,29 +539,29 @@ const AdminPortal = () => {
               </div>
 
               {modalLoading ? (
-                <div className="modal-loading">Loading company details...</div>
+                <div className={styles["modal-loading"]}>Loading company details...</div>
               ) : (
-                <div className="modal-body">
-                  <div className="modal-section">
+                <div className={styles["modal-body"]}>
+                  <div className={styles["modal-section"]}>
                     <h3>Company Information</h3>
-                    <div className="info-grid">
-                      <div className="info-item">
+                    <div className={styles["info-grid"]}>
+                      <div className={styles["info-item"]}>
                         <label>Company Name</label>
                         <p>{selectedCompany.name}</p>
                       </div>
-                      <div className="info-item">
+                      <div className={styles["info-item"]}>
                         <label>Company ID</label>
                         <p>{selectedCompany.id}</p>
                       </div>
-                      <div className="info-item">
+                      <div className={styles["info-item"]}>
                         <label>Number of Shareholders</label>
                         <p>{selectedCompany.no_of_holders}</p>
                       </div>
-                      <div className="info-item">
+                      <div className={styles["info-item"]}>
                         <label>Capital</label>
                         <p>${selectedCompany.capital.toLocaleString()}</p>
                       </div>
-                      <div className="info-item">
+                      <div className={styles["info-item"]}>
                         <label>Created At</label>
                         <p>
                           {new Date(
@@ -569,7 +569,7 @@ const AdminPortal = () => {
                           ).toLocaleString()}
                         </p>
                       </div>
-                      <div className="info-item">
+                      <div className={styles["info-item"]}>
                         <label>Updated At</label>
                         <p>
                           {new Date(
@@ -582,10 +582,10 @@ const AdminPortal = () => {
 
                   {selectedCompany.shareholders &&
                     selectedCompany.shareholders.length > 0 && (
-                      <div className="modal-section">
+                      <div className={styles["modal-section"]}>
                         <h3>Shareholders</h3>
-                        <div className="shareholders-table-wrapper">
-                          <table className="shareholders-table">
+                        <div className={styles["shareholders-table-wrapper"]}>
+                          <table className={styles["shareholders-table"]}>
                             <thead>
                               <tr>
                                 <th>No.</th>
@@ -620,14 +620,14 @@ const AdminPortal = () => {
 
         {editingShareholder && (
           <div
-            className="modal-overlay"
+            className={styles["modal-overlay"]}
             onClick={closeEditShareholderModal}
           >
-            <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-              <div className="modal-header">
+            <div className={styles["modal-content"]} onClick={(e) => e.stopPropagation()}>
+              <div className={styles["modal-header"]}>
                 <h2>Edit Shareholder</h2>
                 <button
-                  className="modal-close-btn"
+                  className={styles["modal-close-btn"]}
                   onClick={closeEditShareholderModal}
                   title="Close"
                 >
@@ -635,10 +635,10 @@ const AdminPortal = () => {
                 </button>
               </div>
 
-              <div className="modal-body">
-                <div className="modal-section">
-                  <form className="space-y-4">
-                    <div className="form-group">
+              <div className={styles["modal-body"]}>
+                <div className={styles["modal-section"]}>
+                  <form className={styles["space-y-4"]}>
+                    <div className={styles["form-group"]}>
                       <label htmlFor="firstName" className="block mb-2 font-semibold">
                         First Name
                       </label>
@@ -656,7 +656,7 @@ const AdminPortal = () => {
                       />
                     </div>
 
-                    <div className="form-group">
+                    <div className={styles["form-group"]}>
                       <label htmlFor="lastName" className="block mb-2 font-semibold">
                         Last Name
                       </label>
@@ -674,7 +674,7 @@ const AdminPortal = () => {
                       />
                     </div>
 
-                    <div className="form-group">
+                    <div className={styles["form-group"]}>
                       <label htmlFor="nationality" className="block mb-2 font-semibold">
                         Nationality
                       </label>

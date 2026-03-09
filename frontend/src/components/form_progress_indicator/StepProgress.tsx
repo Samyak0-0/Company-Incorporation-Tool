@@ -1,3 +1,4 @@
+import styles from "./StepProgress.module.css";
 interface Step {
   id: number;
   label: string;
@@ -22,18 +23,18 @@ export function StepProgress({
               <div key={step.id} className="flex flex-row items-center">
                 {i > 0 && (
                   <div
-                    className={`step-connector ${isCompleted || isActive ? "step-connector-active" : ""}`}
+                    className={`${styles["step-connector"]} ${isCompleted || isActive ? styles["step-connector-active"] : ""}`}
                   />
                 )}
 
                 <div className="flex flex-row items-center gap-2">
                   {/* Circle */}
                   <div
-                    className={`step-circle ${
+                    className={`${styles["step-circle"]} ${
                       isCompleted || isActive
-                        ? "step-circle-active"
-                        : "step-circle-upcoming"
-                    } ${isActive ? "step-circle-ring" : ""}`}
+                        ? styles["step-circle-active"]
+                        : styles["step-circle-upcoming"]
+                    } ${isActive ? styles["step-circle-ring"] : ""}`}
                   >
                     {isCompleted ? (
                       <svg

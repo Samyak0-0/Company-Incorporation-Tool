@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback } from "react";
 import { FaCircleCheck } from "react-icons/fa6";
 import { IoIosWarning } from "react-icons/io";
 import { MdError } from "react-icons/md";
-import "./Notifications.css";
+import styles from "./Notifications.module.css";
 import type { Toast, ToastType } from "./ToastProvider";
 
 interface ToastProps extends Toast {
@@ -42,19 +42,19 @@ const Toast = ({ id, type, title, message, onRemove }: ToastProps) => {
   }, [dismiss]);
 
   return (
-    <div className={`toast ${type}${exiting ? " exiting" : ""}`}>
-      <div className="toast-body">
+    <div className={`${styles.toast} ${type}${exiting ? " exiting" : ""}`}>
+      <div className={styles["toast-body"]}>
         {ICONS[type]}
-        <div className="toast-text">
-          <div className="toast-title">{title}</div>
-          <div className="toast-message">{message}</div>
+        <div className={styles["toast-text"]}>
+          <div className={styles["toast-title"]}>{title}</div>
+          <div className={styles["toast-message"]}>{message}</div>
         </div>
       </div>
       <div
-        className="toast-progress"
+        className={styles["toast-progress"]}
         style={{ animationDuration: `${DURATION}ms` }}
       />
-      <button className="toast-close" onClick={dismiss}>
+      <button className={styles["toast-close"]} onClick={dismiss}>
         ✕
       </button>
     </div>
@@ -62,7 +62,7 @@ const Toast = ({ id, type, title, message, onRemove }: ToastProps) => {
 };
 
 export const ToastContainer = ({ toasts, onRemove }: ToastContainerProps) => (
-  <div className="toast-container">
+  <div className={styles["toast-container"]}>
     {toasts.map((t) => (
       <Toast key={t.id} {...t} onRemove={onRemove} />
     ))}

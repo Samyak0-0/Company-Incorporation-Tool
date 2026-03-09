@@ -1,0 +1,41 @@
+/* Step circle */
+.step-circle {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 14px;
+    transition: background 0.3s ease, box-shadow 0.3s ease;
+}
+
+.step-circle-active {
+    background: var(--color-accent);
+    color: var(--color-bg);
+}
+
+.step-circle-upcoming {
+    background: var(--color-bg);
+    color: var(--color-primary);
+}
+
+.step-circle-ring {
+    box-shadow: 0 0 2px 4px #F25F5C60;
+}
+
+/* Connector line */
+.step-connector {
+    height: 3px;
+    width: 100%;
+    /* min-width: 72px; */
+    min-width: 108px;
+    background: var(--color-bg);
+    border-radius: 2px;
+    transition: background 0.4s ease;
+}
+
+.step-connector-active {
+    background: var(--color-accent);
+}

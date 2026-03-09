@@ -1,5 +1,5 @@
 import { Link } from "react-router";
-import "./Navbar.css";
+import styles from "./Navbar.module.css";
 import { useState, useRef } from "react";
 
 const Navbar = () => {
@@ -34,21 +34,21 @@ const Navbar = () => {
 
   return (
     <>
-      <div className="navbar">
-        <div className="nav_element ml-3 mt-3">
-          <Link to={"/"} className="nav_link2 text-5xl ">
+      <div className={styles["navbar"]}>
+        <div className={`${styles["nav_element"]} ml-3 mt-3`}>
+          <Link to={"/"} className={`${styles["nav_link2"]} text-5xl `}>
             IncorpFirm
           </Link>
         </div>
-        <div className="nav_right text-lg">
-          <div className="nav_element">
-            <Link to={"/incorporate"} className="nav_link">
+        <div className={`${styles["nav_right"]} text-lg`}>
+          <div className={styles["nav_element"]}>
+            <Link to={"/incorporate"} className={styles["nav_link"]}>
               Incorporate
             </Link>
           </div>
 
           <div
-            className="nav_element magneto"
+            className={`${styles.nav_element} ${styles.magneto} cursor-pointer`}
             ref={magnetoRef}
             style={{
               transform: `translate(${outerPos.x}px, ${outerPos.y}px)`,
@@ -58,7 +58,7 @@ const Navbar = () => {
           >
             <Link
               to="/admin"
-              className="nav_link2 magneto-text"
+              className={`${styles.nav_link2} ${styles["magneto-text"]}`}
               style={{
                 transform: `translate(${textPos.x}px, ${textPos.y}px)`,
               }}

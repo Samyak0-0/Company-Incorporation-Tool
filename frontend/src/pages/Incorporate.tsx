@@ -1,10 +1,10 @@
 import { useContext } from "react";
-import "./Incorporate.css";
-import Form1 from "../components/Form1";
-import Form2 from "../components/Form2";
-import Form3 from "../components/Form3";
+import styles from "./Incorporate.module.css";
+import Form1 from "../components/forms/Form1";
+import Form2 from "../components/forms/Form2";
+import Form3 from "../components/forms/Form3";
 import { Context, type ContextValue } from "../utils/ContextProvider";
-import { StepProgress } from "../utils/StepProgress";
+import { StepProgress } from "../components/form_progress_indicator/StepProgress";
 import { FaCircleCheck } from "react-icons/fa6";
 
 function Incorporate() {
@@ -17,9 +17,11 @@ function Incorporate() {
   ];
 
   return (
-    <div className="incorporate">
-      <div className="progress-bar">
-        <div className="form-box w-9/10 flex flex-col items-center justify-center">
+    <div className={styles["incorporate"]}>
+      <div className={styles["progress-bar"]}>
+        <div
+          className={`${styles["form-box"]} w-9/10 flex flex-col items-center justify-center`}
+        >
           <div className="">
             <h2 className="text-4xl my-4 text-center">Incorporation Form</h2>
             <StepProgress steps={steps} current={formStep} />
@@ -28,12 +30,12 @@ function Incorporate() {
           <div className="flex gap-2.5 mt-9 justify-center">
             <button
               onClick={() => setFormStep((c) => Math.max(1, c - 1))}
-              className="btn-back"
+              className={styles["btn-back"]}
             >
               ← Back
             </button>
             <button
-              className="btn-next"
+              className={styles["btn-next"]}
               type="submit"
               form={formStep == 1 ? "form1" : formStep == 2 ? "form2" : "form3"}
             >

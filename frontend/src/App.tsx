@@ -1,4 +1,3 @@
-import "./App.css";
 import { createBrowserRouter } from "react-router";
 import Homepage from "./pages/Homepage.tsx";
 import Incorporate from "./pages/Incorporate.tsx";
@@ -6,7 +5,7 @@ import Login from "./pages/Login.tsx";
 import AdminPortal from "./pages/AdminPortal.tsx";
 import { RouterProvider } from "react-router";
 import NotFound from "./pages/NotFound.tsx";
-import Navbar from "./components/Navbar.tsx";
+import Navbar from "./components/navbar/Navbar.tsx";
 import { Outlet } from "react-router";
 
 const router = createBrowserRouter([

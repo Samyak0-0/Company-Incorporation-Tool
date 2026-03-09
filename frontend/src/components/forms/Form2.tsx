@@ -1,12 +1,13 @@
 import { useContext, useEffect, useState } from "react";
-import { Context, type ContextValue } from "../utils/ContextProvider";
-import FlagSelect from "../utils/FlagSelect";
+import { Context, type ContextValue } from "../../utils/ContextProvider";
+import FlagSelect from "../../utils/FlagSelect.tsx";
 import { RiResetLeftLine } from "react-icons/ri";
 import { TfiReload } from "react-icons/tfi";
 import { CiLineHeight } from "react-icons/ci";
 import { FaArrowsLeftRightToLine } from "react-icons/fa6";
 import { MdNavigateBefore, MdNavigateNext } from "react-icons/md";
-import { useToast } from "../utils/ToastProvider";
+import { useToast } from "../../utils/ToastProvider";
+import styles from "./Form.module.css";
 
 function Form2() {
   const {
@@ -179,7 +180,7 @@ function Form2() {
                     </label>
                     <br />
                     <input
-                      className="fields"
+                      className={styles["fields"]}
                       type="text"
                       name="firstName"
                       minLength={3}
@@ -195,7 +196,7 @@ function Form2() {
                     </label>
                     <br />
                     <input
-                      className="fields"
+                      className={styles["fields"]}
                       type="text"
                       name="lastName"
                       minLength={3}
@@ -281,7 +282,7 @@ function Form2() {
                 </label>
                 <br />
                 <input
-                  className="fields"
+                  className={styles["fields"]}
                   type="text"
                   name="firstName"
                   minLength={3}
@@ -297,7 +298,7 @@ function Form2() {
                 </label>
                 <br />
                 <input
-                  className="fields"
+                  className={styles["fields"]}
                   type="text"
                   name="lastName"
                   minLength={3}
