@@ -1,10 +1,10 @@
 import { useContext } from "react";
 import styles from "./Incorporate.module.css";
-import Form1 from "../components/forms/Form1";
-import Form2 from "../components/forms/Form2";
-import Form3 from "../components/forms/Form3";
-import { Context, type ContextValue } from "../utils/ContextProvider";
-import { StepProgress } from "../components/form_progress_indicator/StepProgress";
+import Form1 from "../../components/forms/Form1";
+import Form2 from "../../components/forms/Form2";
+import Form3 from "../../components/forms/Form3";
+import { Context, type ContextValue } from "../../utils/ContextProvider";
+import { StepProgress } from "../../components/form_progress_indicator/StepProgress";
 import { FaCircleCheck } from "react-icons/fa6";
 
 function Incorporate() {

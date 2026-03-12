@@ -4,11 +4,11 @@ import { FaEdit } from "react-icons/fa";
 import { FaPlus } from "react-icons/fa6";
 import { RiDeleteBin6Line } from "react-icons/ri";
 import { MdClose } from "react-icons/md";
-import { getCountryName } from "../utils/countryNames";
+import { getCountryName } from "../../utils/countryNames";
 import { Link } from "react-router";
 import { useNavigate } from "react-router";
-import { Context, type ContextValue } from "../utils/ContextProvider";
-import FlagSelect from "../utils/FlagSelect";
+import { Context, type ContextValue } from "../../utils/ContextProvider";
+import FlagSelect from "../../utils/FlagSelect";
 
 interface Company {
   id: number;

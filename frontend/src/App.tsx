@@ -1,10 +1,10 @@
 import { createBrowserRouter } from "react-router";
-import Homepage from "./pages/Homepage.tsx";
-import Incorporate from "./pages/Incorporate.tsx";
-import Login from "./pages/Login.tsx";
-import AdminPortal from "./pages/AdminPortal.tsx";
+import Homepage from "./pages/homepage/Homepage.tsx";
+import Incorporate from "./pages/incorporate/Incorporate.tsx";
+import Login from "./pages/login/Login.tsx";
+import AdminPortal from "./pages/admin-portal/AdminPortal.tsx";
 import { RouterProvider } from "react-router";
-import NotFound from "./pages/NotFound.tsx";
+import NotFound from "./pages/not-found/NotFound.tsx";
 import Navbar from "./components/navbar/Navbar.tsx";
 import { Outlet } from "react-router";
 

@@ -1,6 +1,6 @@
 import { Link } from "react-router";
 import styles from "./Homepage.module.css";
-import incorporate from "../assets/images/incorporate.jpg";
+import incorporate from "../../assets/images/incorporate.jpg";
 import { FaArrowRight } from "react-icons/fa";
 import { FaQuoteLeft } from "react-icons/fa";
 import { FaQuoteRight } from "react-icons/fa";
