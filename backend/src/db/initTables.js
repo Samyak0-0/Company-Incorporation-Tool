@@ -1,6 +1,9 @@
 import { query } from "./connection.js";
 
 export const initTables = async () => {
+  // const insertDummyData = async () => {
+  //   await query(`INSERT INTO COMPANY`);
+  // };
   try {
     await query(`
       CREATE TABLE IF NOT EXISTS company (

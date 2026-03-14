@@ -20,7 +20,7 @@ const router = createBrowserRouter([
     children: [
       { index: true, element: <Homepage /> },
       { path: "incorporate", element: <Incorporate /> },
-      { path: "login", element: <Login /> },
+      { path: "auth", element: <Login /> },
       { path: "admin", element: <AdminPortal /> },
       { path: "*", element: <NotFound /> },
     ],
