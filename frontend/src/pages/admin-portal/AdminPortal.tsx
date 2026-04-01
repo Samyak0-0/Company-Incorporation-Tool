@@ -329,8 +329,10 @@ const AdminPortal = () => {
     if (columnName === "S.N.") return;
 
     if (companySortColumn === columnName) {
+      setPageNumber(1);
       setCompanySortOrder(companySortOrder === "asc" ? "desc" : "asc");
     } else {
+      setPageNumber(1);
       setCompanySortColumn(columnName);
       setCompanySortOrder("asc");
     }
@@ -340,8 +342,10 @@ const AdminPortal = () => {
     if (columnName === "S.N.") return;
 
     if (shareholderSortColumn === columnName) {
+      setPageNumber(1);
       setShareholderSortOrder(shareholderSortOrder === "asc" ? "desc" : "asc");
     } else {
+      setPageNumber(1);
       setShareholderSortColumn(columnName);
       setShareholderSortOrder("asc");
     }
