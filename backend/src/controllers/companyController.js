@@ -36,18 +36,24 @@ export const getCompanyById = asyncHandler(async (req, res) => {
 });
 
 export const getAllCompanies = asyncHandler(async (req, res) => {
-  const { page, filers } = req.params;
-  const { data = "compact", sortBy = "created_at", sortOrder = "desc" } = req.query;
+  const {
+    data = "compact",
+    sortBy = "created_at",
+    sortOrder = "desc",
+    pageNo = 1,
+  } = req.query;
   const includeShareholders = data === "full";
-  const companies = await companyService.getAllCompanies(
+  const result = await companyService.getAllCompanies(
     includeShareholders,
     sortBy,
     sortOrder,
+    pageNo,
   );
 
   res.status(200).json({
     success: true,
-    data: companies,
+    data: result.companies,
+    totalCompanies: result.noOfCompanies,
   });
 });
 
@@ -91,5 +97,19 @@ export const deleteCompany = asyncHandler(async (req, res) => {
     success: true,
     message: "Company deleted successfully",
     data: company,
+  });
+});
+
+export const dummyData = asyncHandler(async (_, res) => {
+  const dummy = await companyService.insertDummyData();
+
+  if (!dummy) {
+    return res.status(400).json({
+      message: "Failure in Inserting Dummy Data to the Database.",
+    });
+  }
+
+  return res.status(200).json({
+    message: "Successfully Inserted Dummy Data to the Database.",
   });
 });

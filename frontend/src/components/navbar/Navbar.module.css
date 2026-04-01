@@ -28,13 +28,13 @@
     position: relative;
 }
 
-.nav_element:last-child {
+.nav_element:nth-child(2) {
     border: 2px solid var(--color-primary);
     padding: 10px 30px;
     border-radius: 5px;
 }
 
-.nav_element:last-child:hover {
+.nav_element:nth-child(2):hover {
     border: 2px solid var(--color-accent);
     background-color: var(--color-accent);
     color: var(--color-bg);

@@ -7,6 +7,7 @@ import { RouterProvider } from "react-router";
 import NotFound from "./pages/not-found/NotFound.tsx";
 import Navbar from "./components/navbar/Navbar.tsx";
 import { Outlet } from "react-router";
+import { ProtectedRoute } from "./utils/ProtectedRoute.tsx";
 
 const router = createBrowserRouter([
   {
@@ -21,7 +22,14 @@ const router = createBrowserRouter([
       { index: true, element: <Homepage /> },
       { path: "incorporate", element: <Incorporate /> },
       { path: "auth", element: <Login /> },
-      { path: "admin", element: <AdminPortal /> },
+      {
+        path: "admin",
+        element: (
+          <ProtectedRoute>
+            <AdminPortal />
+          </ProtectedRoute>
+        ),
+      },
       { path: "*", element: <NotFound /> },
     ],
   },

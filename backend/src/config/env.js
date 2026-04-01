@@ -15,4 +15,9 @@ export const config = {
   api: {
     url: process.env.API_URL || "http://localhost:3000",
   },
+  secretKeys: {
+    accessTokenSecret: process.env.ACCESS_TOKEN_SECRET || "Access_Secret",
+    refreshTokenSecret: process.env.REFRESH_TOKEN_SECRET || "Refresh_Secret",
+    JwtTokenSecret: process.env.JWT_SECRET || "Jwt_Secret",
+  },
 };

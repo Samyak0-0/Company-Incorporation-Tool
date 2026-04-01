@@ -41,16 +41,37 @@ export const addMultipleShareholders = async (
   return results;
 };
 
-export const getAllShareholders = async (sortBy = "company_name", sortOrder = "asc") => {
+export const getAllShareholders = async (
+  sortBy = "company_name",
+  sortOrder = "asc",
+  pageNumber,
+) => {
   // Validate sortBy to prevent SQL injection
-  const validColumns = ["id", "first_name", "last_name", "nationality", "company_id", "company_name"];
+  const validColumns = [
+    "id",
+    "first_name",
+    "last_name",
+    "nationality",
+    "company_id",
+    "company_name",
+  ];
   const column = validColumns.includes(sortBy) ? sortBy : "company_name";
   const order = sortOrder.toUpperCase() === "DESC" ? "DESC" : "ASC";
-  
+
   const result = await query(
-    `SELECT s.*, c.name as company_name FROM shareholders s JOIN company c ON s.company_id = c.id ORDER BY ${column} ${order}`,
+    `SELECT s.*, c.name as company_name FROM shareholders s JOIN company c ON s.company_id = c.id ORDER BY ${column} ${order} LIMIT 5 OFFSET ${(pageNumber - 1) * 5}`,
   );
-  return result.rows;
+  const shareholders = result.rows;
+
+  const noOfShareholdersQuery = await query(
+    `SELECT COUNT(*) FROM shareholders`,
+  );
+  const noOfShareholders = noOfShareholdersQuery.rows[0].count;
+
+  return {
+    shareholders,
+    noOfShareholders,
+  };
 };
 
 export const getShareholdersByCompanyId = async (companyId) => {

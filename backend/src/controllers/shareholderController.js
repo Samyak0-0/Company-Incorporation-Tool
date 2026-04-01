@@ -2,12 +2,21 @@ import * as shareholderService from "../services/shareholderService.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
 
 export const getAllShareholders = asyncHandler(async (req, res) => {
-  const { sortBy = "company_name", sortOrder = "asc" } = req.query;
-  const shareholders = await shareholderService.getAllShareholders(sortBy, sortOrder);
+  const {
+    sortBy = "company_name",
+    sortOrder = "asc",
+    pageNumber = 1,
+  } = req.query;
+  const result = await shareholderService.getAllShareholders(
+    sortBy,
+    sortOrder,
+    pageNumber,
+  );
 
   res.status(200).json({
     success: true,
-    data: shareholders,
+    data: result.shareholders,
+    noOfShareholders: result.noOfShareholders,
   });
 });
 

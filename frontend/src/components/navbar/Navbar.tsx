@@ -1,12 +1,14 @@
 import { Link } from "react-router";
 import styles from "./Navbar.module.css";
-import { useState, useRef } from "react";
+import { useState, useRef, useContext } from "react";
+import { AuthContext, type AuthContextType } from "../../utils/AuthProvider";
 
 const Navbar = () => {
   const magnetoRef = useRef<HTMLDivElement>(null);
 
   const [outerPos, setOuterPos] = useState({ x: 0, y: 0 });
   const [textPos, setTextPos] = useState({ x: 0, y: 0 });
+  const { user } = useContext(AuthContext) as AuthContextType;
 
   function activateMagneto(e: React.MouseEvent<HTMLDivElement>) {
     const magneto = magnetoRef.current;
@@ -63,7 +65,7 @@ const Navbar = () => {
                 transform: `translate(${textPos.x}px, ${textPos.y}px)`,
               }}
             >
-              Login
+              {user ? "Dashboard" : "Login"}
             </Link>
           </div>
         </div>

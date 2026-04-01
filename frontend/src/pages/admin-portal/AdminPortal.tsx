@@ -1,4 +1,4 @@
-import styles from "./AdminPortal.module.css"
+import styles from "./AdminPortal.module.css";
 import { useState, useEffect, useContext, useCallback } from "react";
 import { FaEdit } from "react-icons/fa";
 import { FaPlus } from "react-icons/fa6";
@@ -9,6 +9,11 @@ import { Link } from "react-router";
 import { useNavigate } from "react-router";
 import { Context, type ContextValue } from "../../utils/ContextProvider";
 import FlagSelect from "../../utils/FlagSelect";
+import { useToast } from "../../utils/ToastProvider";
+import { MdNavigateNext } from "react-icons/md";
+import { MdNavigateBefore } from "react-icons/md";
+import { FaUserCircle } from "react-icons/fa";
+import { AuthContext, type AuthContextType } from "../../utils/AuthProvider";
 
 interface Company {
   id: number;
@@ -46,6 +51,7 @@ const AdminPortal = () => {
   const [activeTab, setActiveTab] = useState<"company" | "shareholders">(
     "company",
   );
+  const { toast } = useToast();
   const [companyData, setCompanyData] = useState<Company[]>([]);
   const [shareholdersData, setShareholdersData] = useState<Shareholder[]>([]);
   const [loading, setLoading] = useState(false);
@@ -53,12 +59,25 @@ const AdminPortal = () => {
   const [selectedCompany, setSelectedCompany] =
     useState<DetailedCompany | null>(null);
   const [modalLoading, setModalLoading] = useState(false);
-  const [companySortColumn, setCompanySortColumn] = useState<string>("created_at");
-  const [companySortOrder, setCompanySortOrder] = useState<"asc" | "desc">("desc");
-  const [shareholderSortColumn, setShareholderSortColumn] = useState<string>("company_name");
-  const [shareholderSortOrder, setShareholderSortOrder] = useState<"asc" | "desc">("asc");
-  const [editingShareholder, setEditingShareholder] = useState<EditingShareHolder | null>(null);
-  const [editFormData, setEditFormData] = useState({ firstName: "", lastName: "", nationality: "" });
+  const [companySortColumn, setCompanySortColumn] =
+    useState<string>("created_at");
+  const [companySortOrder, setCompanySortOrder] = useState<"asc" | "desc">(
+    "desc",
+  );
+  const [shareholderSortColumn, setShareholderSortColumn] =
+    useState<string>("company_name");
+  const [shareholderSortOrder, setShareholderSortOrder] = useState<
+    "asc" | "desc"
+  >("asc");
+  const [editingShareholder, setEditingShareholder] =
+    useState<EditingShareHolder | null>(null);
+  const [editFormData, setEditFormData] = useState({
+    firstName: "",
+    lastName: "",
+    nationality: "",
+  });
+  const [pageNumber, setPageNumber] = useState<number>(1);
+  const [maxPageNumber, setMaxPageNumber] = useState<number>(1);
   const navigate = useNavigate();
   const {
     setForm1Data,
@@ -69,13 +88,49 @@ const AdminPortal = () => {
     setTargetId,
     resetForm,
   } = useContext(Context) as ContextValue;
+  const { logOut, authToken, login } = useContext(
+    AuthContext,
+  ) as AuthContextType;
 
   const fetchCompanyDetails = async (companyId: number) => {
     setModalLoading(true);
     try {
-      const response = await fetch(
+      let response = await fetch(
         `http://localhost:3000/api/company/${companyId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${authToken}`,
+          },
+        },
       );
+
+      if (response.status === 403) {
+        const res = await fetch(
+          `http://localhost:3000/api/auth/refresh-token`,
+          {
+            method: "GET",
+            credentials: "include",
+          },
+        );
+
+        if (!res.ok) {
+          logOut();
+          return;
+        }
+        const data = await res.json();
+        if (data.accessToken && data.user) {
+          login(data.accessToken, data.user);
+        }
+
+        response = await fetch(
+          `http://localhost:3000/api/company/${companyId}`,
+          {
+            headers: {
+              Authorization: `Bearer ${data.accessToken}`,
+            },
+          },
+        );
+      }
       if (!response.ok) throw new Error("Failed to fetch company details");
       const result = await response.json();
       if (result.success && result.data) {
@@ -88,17 +143,53 @@ const AdminPortal = () => {
     }
   };
 
-  const fetchCompanyData = useCallback( async () => {
+  const fetchCompanyData = useCallback(async () => {
     setLoading(true);
     setError(null);
     try {
-      const response = await fetch(
-        `http://localhost:3000/api/company?sortBy=${companySortColumn}&sortOrder=${companySortOrder}`,
+      let response = await fetch(
+        `http://localhost:3000/api/company?sortBy=${companySortColumn}&sortOrder=${companySortOrder}&pageNo=${pageNumber}`,
+        {
+          headers: {
+            Authorization: `Bearer ${authToken}`,
+          },
+        },
       );
+
+      if (response.status === 403) {
+        const res = await fetch(
+          `http://localhost:3000/api/auth/refresh-token`,
+          {
+            method: "GET",
+            credentials: "include",
+          },
+        );
+
+        if (!res.ok) {
+          logOut();
+          return;
+        }
+        const data = await res.json();
+        if (data.accessToken && data.user) {
+          login(data.accessToken, data.user);
+        }
+        response = await fetch(
+          `http://localhost:3000/api/company?sortBy=${companySortColumn}&sortOrder=${companySortOrder}&pageNo=${pageNumber}`,
+          {
+            headers: {
+              Authorization: `Bearer ${data.accessToken}`,
+            },
+          },
+        );
+      }
+
       if (!response.ok) throw new Error("Failed to fetch company data");
       const result = await response.json();
       const companies = result.success && result.data ? result.data : [];
       setCompanyData(companies);
+      setMaxPageNumber(
+        Math.ceil(result.totalCompanies > 0 ? result.totalCompanies / 5 : 1),
+      );
     } catch (err) {
       setError(
         err instanceof Error
@@ -108,19 +199,66 @@ const AdminPortal = () => {
     } finally {
       setLoading(false);
     }
-  }, [companySortColumn, companySortOrder])
-                                      
-  const fetchShareholdersData = useCallback (async () => {
+  }, [companySortColumn, companySortOrder, pageNumber]);
+
+  const handlePageChange = (step: "forward" | "backward") => {
+    if (step === "forward" && pageNumber > 1) {
+      setPageNumber(pageNumber - 1);
+    }
+    if (step === "backward" && pageNumber < maxPageNumber) {
+      setPageNumber(pageNumber + 1);
+    }
+  };
+
+  const fetchShareholdersData = useCallback(async () => {
     setLoading(true);
     setError(null);
     try {
-      const response = await fetch(
-        `http://localhost:3000/api/shareholders?sortBy=${shareholderSortColumn}&sortOrder=${shareholderSortOrder}`,
+      let response = await fetch(
+        `http://localhost:3000/api/shareholders?sortBy=${shareholderSortColumn}&sortOrder=${shareholderSortOrder}&pageNumber=${pageNumber}`,
+        {
+          headers: {
+            Authorization: `Bearer ${authToken}`,
+          },
+        },
       );
+
+      if (response.status === 403) {
+        const res = await fetch(
+          `http://localhost:3000/api/auth/refresh-token`,
+          {
+            method: "GET",
+            credentials: "include",
+          },
+        );
+
+        if (!res.ok) {
+          logOut();
+          return;
+        }
+        const data = await res.json();
+        if (data.accessToken && data.user) {
+          login(data.accessToken, data.user);
+        }
+        response = await fetch(
+          `http://localhost:3000/api/shareholders?sortBy=${shareholderSortColumn}&sortOrder=${shareholderSortOrder}&pageNumber=${pageNumber}`,
+          {
+            headers: {
+              Authorization: `Bearer ${data.accessToken}`,
+            },
+          },
+        );
+      }
+
       if (!response.ok) throw new Error("Failed to fetch shareholders data");
       const result = await response.json();
       const shareholders = result.success && result.data ? result.data : [];
       setShareholdersData(shareholders);
+      setMaxPageNumber(
+        Math.ceil(
+          result.noOfShareholders > 0 ? result.noOfShareholders / 5 : 1,
+        ),
+      );
     } catch (err) {
       setError(
         err instanceof Error
@@ -130,7 +268,7 @@ const AdminPortal = () => {
     } finally {
       setLoading(false);
     }
-  }, [shareholderSortOrder, shareholderSortColumn])
+  }, [shareholderSortOrder, shareholderSortColumn, pageNumber]);
 
   const deleteCompany = async (companyId: number) => {
     if (!window.confirm("Are you sure you want to delete this company?")) {
@@ -163,8 +301,32 @@ const AdminPortal = () => {
     navigate("/incorporate");
   };
 
+  const handleAddDummyData = async () => {
+    const confirmation = confirm(
+      "Insert Dummy Data?\n\nWarning!! This will *erase* all previous records and replace them with dummy data.",
+    );
+
+    if (confirmation === false) {
+      return;
+    }
+
+    try {
+      const res = await fetch(`http://localhost:3000/api/company/dummy-data`, {
+        method: "POST",
+      });
+      if (!res.ok) {
+        throw new Error("Failed to Insert Dummy Data");
+      }
+      toast.success("Success!", "Dummy Data Inserted Successfully");
+      await fetchCompanyData();
+    } catch (err) {
+      console.log("Error: ", err);
+      toast.error("Error!", "Failed to Insert Dummy Data");
+    }
+  };
+
   const handleCompanyColumnSort = (columnName: string) => {
-    if (columnName === "S.N.") return; 
+    if (columnName === "S.N.") return;
 
     if (companySortColumn === columnName) {
       setCompanySortOrder(companySortOrder === "asc" ? "desc" : "asc");
@@ -175,7 +337,7 @@ const AdminPortal = () => {
   };
 
   const handleShareholderColumnSort = (columnName: string) => {
-    if (columnName === "S.N.") return; 
+    if (columnName === "S.N.") return;
 
     if (shareholderSortColumn === columnName) {
       setShareholderSortOrder(shareholderSortOrder === "asc" ? "desc" : "asc");
@@ -268,7 +430,11 @@ const AdminPortal = () => {
   const updateShareholder = async () => {
     if (!editingShareholder) return;
 
-    if (!editFormData.firstName || !editFormData.lastName || !editFormData.nationality) {
+    if (
+      !editFormData.firstName ||
+      !editFormData.lastName ||
+      !editFormData.nationality
+    ) {
       setError("All fields are required");
       return;
     }
@@ -308,25 +474,102 @@ const AdminPortal = () => {
     } else {
       fetchShareholdersData();
     }
-  }, [activeTab, companySortColumn, companySortOrder, shareholderSortColumn, shareholderSortOrder, fetchCompanyData, fetchShareholdersData]);
+  }, [
+    activeTab,
+    companySortColumn,
+    companySortOrder,
+    shareholderSortColumn,
+    shareholderSortOrder,
+    fetchCompanyData,
+    fetchShareholdersData,
+  ]);
+
+  const [openAccountModal, setOpenAccountModal] = useState<boolean>(false);
+
+  const handleAccountModal = () => {
+    setOpenAccountModal(!openAccountModal);
+  };
+
+  const handleLogout = async () => {
+    try {
+      const res = await fetch(`http://localhost:3000/api/auth/logout`, {
+        method: "DELETE",
+        credentials: "include",
+      });
+      if (!res.ok) {
+        throw new Error(`Cannot LogOut the User`);
+      }
+      toast.success(`Success`, "Logged Out the Given User Successfully!");
+      logOut();
+    } catch (err) {
+      console.log(err);
+      toast.error(`Error`, "Cannot Log Out the Given User");
+    }
+  };
+
+  const handleLogoutAll = async () => {
+    try {
+      const res = await fetch(`http://localhost:3000/api/auth/logout-all`, {
+        method: "DELETE",
+        credentials: "include",
+      });
+      if (!res.ok) {
+        throw new Error(`Cannot Log Out Of All Devices`);
+      }
+      toast.success(`Success`, "Logged Out Of All Devices Successfully!");
+      logOut();
+    } catch (err) {
+      console.log(err);
+      toast.error(`Error`, "Cannot Log Out Of All Devices");
+    }
+  };
 
   return (
     <div className={styles["admin-portal"]}>
       <div className={styles["admin-container"]}>
+        <div className="absolute top-4 right-4 flex flex-col items-end ">
+          <FaUserCircle
+            className=" cursor-pointer hover:text-(--color-accent)"
+            size={30}
+            onClick={handleAccountModal}
+          />
+          {openAccountModal && (
+            <div className="relative text-right border-r-2 border-(--color-accent) pr-2">
+              <div
+                className="cursor-pointer hover:text-(--color-accent)"
+                onClick={handleLogout}
+              >
+                Logout
+              </div>
+              <div
+                className="cursor-pointer hover:text-(--color-accent)"
+                onClick={handleLogoutAll}
+              >
+                Logout All
+              </div>
+            </div>
+          )}
+        </div>
         <h1 className={styles["admin-title"]}>Admin Dashboard</h1>
 
         <div className={styles["toggle-container"]}>
           <button
-            className={`${styles["toggle-btn"]} ${activeTab === "company" ? styles.active : ""}`}
-            onClick={() => setActiveTab("company")}
+            className={`${styles["toggle-btn"]} text-4xl ${activeTab === "company" ? styles.active : ""}`}
+            onClick={() => {
+              setPageNumber(1);
+              setActiveTab("company");
+            }}
           >
             Company
           </button>
           <button
-            className={`${styles["toggle-btn"]} ${
+            className={`${styles["toggle-btn"]} text-4xl ${
               activeTab === "shareholders" ? styles.active : ""
             }`}
-            onClick={() => setActiveTab("shareholders")}
+            onClick={() => {
+              setPageNumber(1);
+              setActiveTab("shareholders");
+            }}
           >
             Shareholders
           </button>
@@ -340,18 +583,30 @@ const AdminPortal = () => {
             <div className={styles["data-container"]}>
               <div className="flex justify-between mb-2 items-baseline">
                 <h2>Company Data</h2>
-                <Link to={"/incorporate"}>
+                <div className="flex gap-4 ">
                   <button
                     className="flex justify-center items-center gap-4 px-4 py-2 rounded-[5px] cursor-pointer"
                     style={{
                       backgroundColor: "var(--color-accent)",
                       color: "var(--color-bg)",
                     }}
-                    onClick={handleAdd}
+                    onClick={handleAddDummyData}
                   >
-                    <FaPlus /> Company
+                    <FaPlus /> Dummy Data
                   </button>
-                </Link>
+                  <Link to={"/incorporate"}>
+                    <button
+                      className="flex justify-center items-center gap-4 px-4 py-2 rounded-[5px] cursor-pointer"
+                      style={{
+                        backgroundColor: "var(--color-accent)",
+                        color: "var(--color-bg)",
+                      }}
+                      onClick={handleAdd}
+                    >
+                      <FaPlus /> Company
+                    </button>
+                  </Link>
+                </div>
               </div>
               {companyData.length > 0 ? (
                 <div className={styles["table-wrapper"]}>
@@ -368,12 +623,21 @@ const AdminPortal = () => {
                               <th
                                 key={key}
                                 onClick={() => handleCompanyColumnSort(key)}
-                                style={{ cursor: "pointer", userSelect: "none" }}
+                                style={{
+                                  cursor: "pointer",
+                                  userSelect: "none",
+                                }}
                                 title="Click to sort"
                               >
                                 {key}
                                 {companySortColumn === key && (
-                                  <span style={{float: "right", color:"var(--color-bg)", marginRight: "2px" }}>
+                                  <span
+                                    style={{
+                                      float: "right",
+                                      color: "var(--color-bg)",
+                                      marginRight: "2px",
+                                    }}
+                                  >
                                     {companySortOrder === "asc" ? "▲" : "▼"}
                                   </span>
                                 )}
@@ -388,7 +652,7 @@ const AdminPortal = () => {
                           onClick={() => fetchCompanyDetails(company.id)}
                           className={styles["company-row"]}
                         >
-                          <td>{index + 1}</td>
+                          <td>{index + 1 + (pageNumber - 1) * 5}</td>
                           {Object.entries(company)
                             .filter(
                               ([key]) => key !== "id" && key !== "updated_at",
@@ -401,7 +665,9 @@ const AdminPortal = () => {
                                       .toISOString()
                                       .slice(0, 10)
                                       .replace(/-/g, "/")}
-                                    <span className={`${styles["hover-buttons"]} flex text-lg gap-2 `}>
+                                    <span
+                                      className={`${styles["hover-buttons"]} flex text-lg gap-2 `}
+                                    >
                                       <FaEdit
                                         onClick={() => {
                                           editCompany(company.id);
@@ -452,14 +718,27 @@ const AdminPortal = () => {
                               return (
                                 <th
                                   key={key}
-                                  onClick={() => handleShareholderColumnSort(key)}
-                                  style={{ cursor: "pointer", userSelect: "none" }}
+                                  onClick={() =>
+                                    handleShareholderColumnSort(key)
+                                  }
+                                  style={{
+                                    cursor: "pointer",
+                                    userSelect: "none",
+                                  }}
                                   title="Click to sort"
                                 >
                                   {key}
                                   {shareholderSortColumn === key && (
-                                  <span style={{float: "right", color:"var(--color-bg)", marginRight: "2px" }}>
-                                      {shareholderSortOrder === "asc" ? "▲" : "▼"}
+                                    <span
+                                      style={{
+                                        float: "right",
+                                        color: "var(--color-bg)",
+                                        marginRight: "2px",
+                                      }}
+                                    >
+                                      {shareholderSortOrder === "asc"
+                                        ? "▲"
+                                        : "▼"}
                                     </span>
                                   )}
                                 </th>
@@ -470,7 +749,7 @@ const AdminPortal = () => {
                     <tbody>
                       {shareholdersData.map((shareholder, index) => (
                         <tr key={shareholder.id}>
-                          <td>{index + 1}</td>
+                          <td>{index + 1 + (pageNumber - 1) * 5}</td>
                           {Object.entries(shareholder)
                             .filter(
                               ([key]) => key !== "id" && key !== "company_id",
@@ -481,11 +760,15 @@ const AdminPortal = () => {
                                   {key === "company_name" ? (
                                     <span className="flex justify-between">
                                       {String(value)}
-                                      <span className={`${styles["hover-buttons"]} flex text-lg gap-2 `}>
-                                        <FaEdit 
+                                      <span
+                                        className={`${styles["hover-buttons"]} flex text-lg gap-2 `}
+                                      >
+                                        <FaEdit
                                           onClick={(e) => {
                                             e.stopPropagation();
-                                            openEditShareholderModal(shareholder);
+                                            openEditShareholderModal(
+                                              shareholder,
+                                            );
                                           }}
                                           style={{ cursor: "pointer" }}
                                           title="Edit shareholder"
@@ -515,7 +798,9 @@ const AdminPortal = () => {
                   </table>
                 </div>
               ) : (
-                <p className={styles["no-data"]}>No shareholders data available</p>
+                <p className={styles["no-data"]}>
+                  No shareholders data available
+                </p>
               )}
             </div>
           )}
@@ -526,7 +811,10 @@ const AdminPortal = () => {
             className={styles["modal-overlay"]}
             onClick={() => setSelectedCompany(null)}
           >
-            <div className={styles["modal-content"]} onClick={(e) => e.stopPropagation()}>
+            <div
+              className={styles["modal-content"]}
+              onClick={(e) => e.stopPropagation()}
+            >
               <div className={styles["modal-header"]}>
                 <h2>Company Details</h2>
                 <button
@@ -539,7 +827,9 @@ const AdminPortal = () => {
               </div>
 
               {modalLoading ? (
-                <div className={styles["modal-loading"]}>Loading company details...</div>
+                <div className={styles["modal-loading"]}>
+                  Loading company details...
+                </div>
               ) : (
                 <div className={styles["modal-body"]}>
                   <div className={styles["modal-section"]}>
@@ -623,7 +913,10 @@ const AdminPortal = () => {
             className={styles["modal-overlay"]}
             onClick={closeEditShareholderModal}
           >
-            <div className={styles["modal-content"]} onClick={(e) => e.stopPropagation()}>
+            <div
+              className={styles["modal-content"]}
+              onClick={(e) => e.stopPropagation()}
+            >
               <div className={styles["modal-header"]}>
                 <h2>Edit Shareholder</h2>
                 <button
@@ -639,7 +932,10 @@ const AdminPortal = () => {
                 <div className={styles["modal-section"]}>
                   <form className={styles["space-y-4"]}>
                     <div className={styles["form-group"]}>
-                      <label htmlFor="firstName" className="block mb-2 font-semibold">
+                      <label
+                        htmlFor="firstName"
+                        className="block mb-2 font-semibold"
+                      >
                         First Name
                       </label>
                       <input
@@ -657,7 +953,10 @@ const AdminPortal = () => {
                     </div>
 
                     <div className={styles["form-group"]}>
-                      <label htmlFor="lastName" className="block mb-2 font-semibold">
+                      <label
+                        htmlFor="lastName"
+                        className="block mb-2 font-semibold"
+                      >
                         Last Name
                       </label>
                       <input
@@ -675,7 +974,10 @@ const AdminPortal = () => {
                     </div>
 
                     <div className={styles["form-group"]}>
-                      <label htmlFor="nationality" className="block mb-2 font-semibold">
+                      <label
+                        htmlFor="nationality"
+                        className="block mb-2 font-semibold"
+                      >
                         Nationality
                       </label>
                       <FlagSelect
@@ -700,7 +1002,7 @@ const AdminPortal = () => {
                       <button
                         type="button"
                         onClick={updateShareholder}
-                        style={{ backgroundColor: "var(--color-accent)"}}
+                        style={{ backgroundColor: "var(--color-accent)" }}
                         className="px-4 py-2  text-white rounded-md hover:-translate-y-0.5 cursor-pointer"
                       >
                         Save Changes
@@ -712,7 +1014,23 @@ const AdminPortal = () => {
             </div>
           </div>
         )}
-
+        <div className="flex w-full justify-center items-center">
+          <MdNavigateBefore
+            type="button"
+            className="cursor-pointer"
+            size={25}
+            onClick={() => handlePageChange("forward")}
+          />
+          <div>
+            {pageNumber} / {maxPageNumber}
+          </div>
+          <MdNavigateNext
+            type="button"
+            className="cursor-pointer"
+            size={25}
+            onClick={() => handlePageChange("backward")}
+          />
+        </div>
       </div>
     </div>
   );

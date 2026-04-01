@@ -5,11 +5,12 @@
     /* place-items: center; */
     justify-content: center;
     background: var(--color-bg);
-    margin-top: 40px;
+    margin-top: 30px;
     width: 100vw;
 }
 
 .admin-container {
+    position: relative;
     width: 90%;
     height: calc(100% - 20px);
     background: var(--color-surface);

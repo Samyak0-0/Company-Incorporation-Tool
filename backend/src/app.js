@@ -1,7 +1,9 @@
 import express from "express";
 import cors from "cors";
+import cookieParser from "cookie-parser";
+import morgan from "morgan";
 import { config } from "./config/env.js";
-import { requestLogger } from "./middleware/requestLogger.js";
+// import { requestLogger } from "./middleware/requestLogger.js";
 import { errorHandler } from "./middleware/errorHandler.js";
 import appRouter from "./routes/index.js";
 import { initDB } from "./db/connection.js";
@@ -9,10 +11,17 @@ import { initTables } from "./db/initTables.js";
 
 const app = express();
 
-app.use(cors());
+app.use(
+  cors({
+    origin: ["http://localhost:5173"],
+    credentials: true,
+  }),
+);
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(requestLogger);
+app.use(morgan("dev"));
+app.use(cookieParser());
+// app.use(requestLogger);
 
 app.use("/api", appRouter);
 
