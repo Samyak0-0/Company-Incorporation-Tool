@@ -27,6 +27,7 @@
   .toast::before {
       content: '';
       position: absolute;
+      height: 100%;
       left: 0;
       top: 0;
       bottom: 0;
@@ -88,7 +89,6 @@
   }
 
   .toast-title {
-      font-family: 'Rajdhani', sans-serif;
       font-size: 1.05rem;
       font-weight: 700;
       letter-spacing: 0.02em;
@@ -182,7 +182,6 @@
   }
 
   .demo-title {
-      font-family: 'Rajdhani', sans-serif;
       font-size: 1.6rem;
       font-weight: 700;
       color: #d1d5e8;
@@ -198,7 +197,6 @@
   }
 
   .btn {
-      font-family: 'Rajdhani', sans-serif;
       font-size: 0.95rem;
       font-weight: 700;
       letter-spacing: 0.06em;

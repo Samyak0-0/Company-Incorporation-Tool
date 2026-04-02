@@ -1,5 +1,5 @@
 import { createContext, useContext, useCallback, useState } from "react";
-import { ToastContainer } from "./Notifications";
+import { ToastContainer } from "../components/toast_notifications/ToastNotifications.tsx";
 
 export type ToastType = "success" | "warning" | "error";
 export interface Toast {
@@ -49,9 +49,9 @@ export const ToastProvider = ({ children }: { children: React.ReactNode }) => {
 };
 
 export const useToast = () => {
-  const context = useContext(ToastContext);
-  if (!context) {
+  const toastNotification = useContext(ToastContext);
+  if (!toastNotification) {
     throw new Error("useToast must be used within ToastProvider");
   }
-  return context;
+  return toastNotification;
 };

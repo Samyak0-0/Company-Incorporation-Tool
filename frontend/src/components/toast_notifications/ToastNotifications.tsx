@@ -3,21 +3,15 @@ import { FaCircleCheck } from "react-icons/fa6";
 import { IoIosWarning } from "react-icons/io";
 import { MdError } from "react-icons/md";
 import "./Notifications.css";
-import type { Toast, ToastType } from "./ToastProvider";
+import type { Toast } from "../../utils/ToastProvider.tsx";
 
-interface ToastProps extends Toast {
+interface IndividualToast extends Toast {
   onRemove: (id: number) => void;
 }
 
 interface ToastContainerProps {
   toasts: Toast[];
   onRemove: (id: number) => void;
-}
-
-interface ToastContext {
-  success: (title: string, message: string) => void;
-  warning: (title: string, message: string) => void;
-  error: (title: string, message: string) => void;
 }
 
 const ICONS = {
@@ -28,7 +22,7 @@ const ICONS = {
 
 const DURATION = 4000;
 
-const Toast = ({ id, type, title, message, onRemove }: ToastProps) => {
+const Toast = ({ id, type, title, message, onRemove }: IndividualToast) => {
   const [exiting, setExiting] = useState(false);
 
   const dismiss = useCallback(() => {
@@ -68,29 +62,3 @@ export const ToastContainer = ({ toasts, onRemove }: ToastContainerProps) => (
     ))}
   </div>
 );
-
-export const useToast = () => {
-  const [toasts, setToasts] = useState<Toast[]>([]);
-
-  const add = useCallback((type: ToastType, title: string, message: string) => {
-    const id = Date.now() + Math.random();
-    setToasts((prev) => [...prev, { id, type, title, message }]);
-  }, []);
-
-  const remove = useCallback((id: number) => {
-    setToasts((prev) => prev.filter((t) => t.id !== id));
-  }, []);
-
-  const toast: ToastContext = {
-    success: (title, msg) => add("success", title, msg),
-    warning: (title, msg) => add("warning", title, msg),
-    error: (title, msg) => add("error", title, msg),
-  };
-
-  const Container = useCallback(
-    () => <ToastContainer toasts={toasts} onRemove={remove} />,
-    [toasts, remove],
-  );
-
-  return { toast, ToastContainer: Container };
-};
